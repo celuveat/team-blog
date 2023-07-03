@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>Celuveat Blog</title>
+        <link>https://celuveat.github.io/team-blog/front-blog</link>
+        <description>Celuveat Blog</description>
+        <lastBuildDate>Sat, 04 Mar 2023 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>ko</language>
+        <item>
+            <title><![CDATA[우아한 테크코스 5기에 합류하며]]></title>
+            <link>https://celuveat.github.io/team-blog/front-blog/woowa-final</link>
+            <guid>https://celuveat.github.io/team-blog/front-blog/woowa-final</guid>
+            <pubDate>Sat, 04 Mar 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[우아한 테크코스 5기 웹 프론트엔드 트랙에 합류하게 되었습니다. 지금까지 우아한 테크코스에 참여하면서 느낀점과 소감을 정리해 보며 한편의 글로 남겨보려고 합니다.]]></description>
+            <content:encoded><![CDATA[<p>우아한 테크코스 5기 웹 프론트엔드 트랙에 합류하게 되었습니다.
+지금까지 우아한 테크코스에 참여하면서 느낀점과 소감을 정리해 보며 한편의 글로 남겨보려고 합니다.</p><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="합격">합격<a href="#합격" class="hash-link" aria-label="합격에 대한 직접 링크" title="합격에 대한 직접 링크">​</a></h2><img loading="lazy" src="/img/blog/woowa-final/result.png" alt="이미지" style="margin-bottom:20px" class="img_ev3q"><p>우아한테크코스 5기 프론트엔드 트랙에 합류하게 되었습니다.<br>
+1차 합격 소식을 접할 때도 상당히 얼떨떨 했는데 이제는 최종 코딩 테스트를 거치고 합격 이메일을 마주하고 있습니다.</p><p>아직도 최종 코딩 테스트 때의 일이 기억납니다.<br>
+시간이 10분 밖에 남지 않았을 때 코드 에러가 해결되지 않아서 포기할까 하다가도 끝까지 붙잡고 늘어졌었습니다.
+어떻게 얻어낸 기회인데, 이 기회에 제 최선을 다 담아보고 싶었습니다. 이래야 떨어져도 후회가 남지 않을 것 같았달까요?
+진심이 닿았던 걸까, 4분을 남기고 코드의 문제점을 찾아내서 10~15줄 가량 되는 코드를 정말 신들린 듯이 써내려갔습니다.(지금 이렇게 하라고 하면 절대 못할 것 같아요..😇)
+그리고 느낀점을 작성해 제출을 하고 시간을 보니 1분 채 남지 않았었습니다.</p><p>테스트도 작성을 못하고 코드도 뒤죽박죽 섞여 있는 정말 굴러만 가는 스파게티 코드였습니다.
+현재 실력이 이렇구나 깨닫기도 했지만, 정말 최선을 다했기에 후회는 없었습니다.
+그래서일까 이번 합격은 스스로의 최선과 지금까지 쌓아온 노력을 수고했다고 인정해 주는 것 같았습니다.</p><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="합류">합류<a href="#합류" class="hash-link" aria-label="합류에 대한 직접 링크" title="합류에 대한 직접 링크">​</a></h2><p>우테코는 앞으로 인생에 있을 수 있는 수많은 길 중에 하나라고 생각했습니다.
+이 길을 택하기 위해 참 많은 고민을 했습니다.
+택하고 나서도 정말 최선을 다했습니다.
+그렇게 약 한달이라는 시작이 흘렀습니다.<br>
+이 동안 스스로와 같이 하는 사람들에게 정말 많은 감정을 느꼈습니다.
+이 감정을 세개의 메세지에 담아 표현해보고자 했습니다.</p><hr><h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="나와-크루에게">나와 크루에게<a href="#나와-크루에게" class="hash-link" aria-label="나와 크루에게에 대한 직접 링크" title="나와 크루에게에 대한 직접 링크">​</a></h4><h3 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="괜찮아-길을-걷는-과정이잖아">괜찮아, 길을 걷는 과정이잖아.<a href="#괜찮아-길을-걷는-과정이잖아" class="hash-link" aria-label="괜찮아, 길을 걷는 과정이잖아.에 대한 직접 링크" title="괜찮아, 길을 걷는 과정이잖아.에 대한 직접 링크">​</a></h3><p>불안하다.<br>
+걷고 있는 길이 올바른 길인지 자꾸 뒤돌아보게 된다.
+그래서 길을 걷다가도 멈춰서게 되고 발걸음도 가볍지 않다.
+그렇게 길 가운데서 우아한테크코스라는 이정표를 발견했다.
+원래 관심은 크게 없었다. 이 길을 내가 갈 수 있는 길이라고 생각 조차 하지 않았다.
+하지만 이정표를 바라보니 이 길이 어떤지 한 번 느껴 보라고, 일단 걸어보라고 한다.
+어디에서 나온 자신감일까? 이 길을 걸어본다면 최소한 불안은 없앨 수 있을 것만 같았다.</p><blockquote><p>'괜찮아, 길을 걷는 과정이잖아.'</p></blockquote><p>스스로 다독였다. 아직 과정에 불과하다.
+앞으로 남은 길을 편한 마음으로 나아가기 위해서는 불안을 확신으로 바꿀 필요가 있었다.
+이렇게 우아한테크코스라는 이정표를 따라 첫 발자국을 내딛었다.</p><h3 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="잘했어-이제는-나아가보자">잘했어, 이제는 나아가보자.<a href="#잘했어-이제는-나아가보자" class="hash-link" aria-label="잘했어, 이제는 나아가보자.에 대한 직접 링크" title="잘했어, 이제는 나아가보자.에 대한 직접 링크">​</a></h3><p>확신한다.<br>
+원하던 길이다. 길 자체는 너무나 험난하고 힘들다. 심지어 앞으로 더욱더 험난해질거라고 경고도 한다.
+그런데 불안하지 않다. 길을 다 못걸을까 걱정이 될만도 한데 그냥 이 길을 걷는 것 자체만으로 경쾌하다.</p><p>학교는 매일이 같았다. 일어나서 수업을 듣고 그 날 수업이 모두 끝나면 기숙사로 돌아가 쉬었다.
+딱히 힘들지는 않았지만, 똑같은 굴레에 갇힌 느낌이었다.
+우테코는 매일이 다르다. 제일 큰 차이는 사람들과의 소통이다. 똑같이 일어나서 출근을 하고 선릉 캠퍼스로 향한다.
+캠퍼스에 들어오는 순간 마주치는 크루와 인사를 나눈다.
+그리고 데일리 미팅으로 하루를 시작한다. 여러 사람들과 갖가지 활동이나 이야기로 서로의 감정을 공유한다.
+대부분의 미션과 회고는 모두 소통을 전제로 한다. 연극도 하고 글쓰기도 한다. 항상 다른 페어와 하나의 코드를 써 내려간다.
+이 모든 과정이 즐겁다.</p><p>과거에는 무엇을 공부할 지 고민하며 고통스러워했다.
+이제는 여러 미션들을 해결해 나가면서 공부하고 싶은 것이 계속 생겨난다.
+물론 이 양이 너무 많아서 기술 부채로 쌓여가지만 불안하지 않다.
+오히려 공부 할 수 있는 것이 많아져서 들뜬다.
+이 길을 선택한 자신에게 칭찬 해주고 싶다.</p><blockquote><p>'잘했어, 이제는 나아가보자.'</p></blockquote><p>확신이 생겨서일까? 제대로 추진력을 얻을 수 있었다. 스스로 이 길을 열심히 나아가보자고 응원하고 있다.
+그렇게 현재는 멈춰서거나 뒤를 신경쓰지 않고 앞을 보며 나아가고 있다.</p><h3 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="고마워-같은-길을-걸어줘서">고마워, 같은 길을 걸어줘서.<a href="#고마워-같은-길을-걸어줘서" class="hash-link" aria-label="고마워, 같은 길을 걸어줘서.에 대한 직접 링크" title="고마워, 같은 길을 걸어줘서.에 대한 직접 링크">​</a></h3><p>행복하다.<br>
+난 사람을 참 좋아한다. 그래서 길을 나아가며 다양하고 새로운 사람을 만날 수 있어서 행복하다.</p><blockquote><p>안녕하세요~! 닉네임이 어떻게 되세요?</p></blockquote><p>길을 걷다 새로운 사람을 보면 말을 걸게 된다. 그 사람에 대해 알고싶고 친해지고 싶었다.
+그래서 식사 자리를 만들기도 하고 소소한 대화 자리를 만들어보기도 했다.
+각자 모두 개성이 넘치고 착해서 웃음이 절로 나온다. 한 명도 빠짐없이 모두와 친해지고 싶었고, 정말 열심히 사람들과 어울리려고 노력했다. <br>
+그렇게 같이 어울리며 걸어온 우테코 크루들에게 많은 것을 느꼈다. 우테코 크루들은 코딩을 엄청 잘하는 사람이라고는 생각하지 않는다.
+다만, 다들 자신의 의견을 피력하고 코드에 자신의 가치관을 담을 줄 아는 사람들이다. 코드를 보면 이게 어떤 크루의 코드인지 조금씩 보이기 시작한다.
+그리고 다들 이 길을 자신만의 개성대로 즐겁게 걸어가고 있다. 이 풍경이 너무 멋있는 것 같다. 똑같은 길을 가고 있지만 모두가 그 방법은 조금씩 다른 것 같다.</p><blockquote><p>'고마워, 같은 길을 걸어줘서'</p></blockquote><p>함께 말을 섞어본 크루나 코치분이라면 고맙다는 말을 전하고 싶다.
+이 모두는 길고 험난한 길에서 힘과 자극을 주고 행복을 전해준다.
+이 사람들이라면 한 달이 아니라 한 평생을 걸어나가더라도 괜찮지 않을까?</p><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="맺음말">맺음말<a href="#맺음말" class="hash-link" aria-label="맺음말에 대한 직접 링크" title="맺음말에 대한 직접 링크">​</a></h2><p>아마 제목을 보고 우테코 5기에 합류하면서 어떤 일들이 있었는지를 생각하고 들어왔을 수도 있습니다.
+물론 여러가지 사건들도 값진 추억들입니다. 하지만 한달간 느낀 이 감정들은 더욱 더 값지다고 느꼈고 이 느낀점을 위주로 글을 써내려가고 싶었어요.
+저는 앞으로 9개월 동안 더 이 길을 걸어나가게 됩니다! 이 동안 지금과 같은 감정이 계속되기를 기대하고 있어요! 여러분도 응원해주세요~!</p>]]></content:encoded>
+            <author>smallkdb@gmail.com (minjae Kim)</author>
+            <category>회고</category>
+            <category>우아한테크코스</category>
+            <category>글쓰기</category>
+        </item>
+        <item>
+            <title><![CDATA[우아한 테크코스 5기 프리코스 회고(1)]]></title>
+            <link>https://celuveat.github.io/team-blog/front-blog/woowa-precourse-week1-week2</link>
+            <guid>https://celuveat.github.io/team-blog/front-blog/woowa-precourse-week1-week2</guid>
+            <pubDate>Thu, 10 Nov 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[우아한 테크코스 5기 웹 프론트엔드 트랙에 지원한지 벌써 2주가 넘게 흘렀습니다. 지금까지 프리코스를 참여하면서 느낀점과 소감을 정리해 보면서 되돌아보는 시간을 가지려 합니다.]]></description>
+            <content:encoded><![CDATA[<p>우아한 테크코스 5기 웹 프론트엔드 트랙에 지원한지 벌써 2주가 넘게 흘렀습니다.
+지금까지 프리코스를 참여하면서 느낀점과 소감을 정리해 보면서 되돌아보는 시간을 가지려 합니다.</p><h3 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="시작에-앞서">시작에 앞서...<a href="#시작에-앞서" class="hash-link" aria-label="시작에 앞서...에 대한 직접 링크" title="시작에 앞서...에 대한 직접 링크">​</a></h3><p>이번 프리코스로부터 얻은 지식이 굉장히 많지만, 얻은 지식 만큼이나 참여하면서 느낀 감정들이 정말 다양합니다.
+개발자를 꿈꾼 제가 너무 자랑스러울 정도로 개발이 너무 좋아졌습니다.
+그래서 지식 위주 보다는 <strong>그 과정 속에서 얻고, 느낀 감정과 소감을 위주로 작성</strong>했습니다.</p><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="시작">시작<a href="#시작" class="hash-link" aria-label="시작에 대한 직접 링크" title="시작에 대한 직접 링크">​</a></h2><p>우아한테크코스가 이번 기수부터 프리코스에 추가한 커뮤니티는 정말 제 마음에 쏙 들었습니다.
+개발자를 꿈꾸는 여러 사람들이 한데 모이니 그 열정이 바깥으로 뿜어져 나오는 것 같은 느낌이 좋았습니다.
+이 안에서 여러 사람들과 소통하며 의견을 나누는 경험은 저를 프리코스에 더 푹 빠지게 만들었습니다.</p><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="꾸준한-고민은-고민하는-습관을-만든다">꾸준한 고민은 고민하는 습관을 만든다.<a href="#꾸준한-고민은-고민하는-습관을-만든다" class="hash-link" aria-label="꾸준한 고민은 고민하는 습관을 만든다.에 대한 직접 링크" title="꾸준한 고민은 고민하는 습관을 만든다.에 대한 직접 링크">​</a></h2><p>최대한 우아한테크코스 커뮤니티의 도움 없이 <strong>혼자 고민해보고 결론을 도출해 내려고 노력</strong>했습니다.
+기능 목록부터 커밋 메시지, 함수 네이밍, 기능 요구 사항에 기재되지 않은 예외 사항 등 모두 고민이 필요한 것들입니다.
+그렇게 다음과 같은 목표로 잡았습니다.</p><blockquote><p>왜 이 방법을 선택했는지 확실히 말 할 수 있게 만들자!</p></blockquote><p>그러면서 꾸준히 고민에 대한 저만의 이정표를 하나씩 세워나갔습니다.
+이렇게 고민하다 보니 <strong>고민도 어느새 습관</strong>이 되었습니다.
+요즘에는 머리가 스스로 계속 생각을 하려고 합니다.
+씻을 때도, 밥을 먹을 때도, 잠을 자려 침대에 누워 있을 때까지 고민을 계속하고 있는 제 모습에 스스로 놀랐습니다.</p><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="시간-복잡도를-낮추려면-그만큼-시간을-투자하자">시간 복잡도를 낮추려면 그만큼 시간을 투자하자.<a href="#시간-복잡도를-낮추려면-그만큼-시간을-투자하자" class="hash-link" aria-label="시간 복잡도를 낮추려면 그만큼 시간을 투자하자.에 대한 직접 링크" title="시간 복잡도를 낮추려면 그만큼 시간을 투자하자.에 대한 직접 링크">​</a></h2><p><a href="https://github.com/woowacourse-precourse/javascript-onboarding/blob/main/docs/PROBLEM6.md" target="_blank" rel="noopener noreferrer">1주차 6번 문제</a>가 정말 저를 많이 괴롭혔습니다.
+문제를 처음 구현했을 때 무려 <strong>n^4의 시간 복잡도</strong>가 나왔습니다.(지금 와서 표현해보려고 하니 도대체 어떻게 n^4의 복잡도가 나왔나 싶네요..)</p><p>이런 느낌의 for문과 if문의 지옥이었습니다.</p><div class="language-javascript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-javascript codeBlock_bY9V thin-scrollbar"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token keyword control-flow" style="color:#00009f">for</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">(</span><span class="token keyword" style="color:#00009f">let</span><span class="token plain"> i </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">0</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"> i </span><span class="token operator" style="color:#393A34">&lt;</span><span class="token plain"> list</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">length</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"> i</span><span class="token operator" style="color:#393A34">++</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token keyword control-flow" style="color:#00009f">if</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">list</span><span class="token punctuation" style="color:#393A34">[</span><span class="token plain">i</span><span class="token punctuation" style="color:#393A34">]</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">&gt;</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">0</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      </span><span class="token keyword control-flow" style="color:#00009f">for</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">(</span><span class="token keyword" style="color:#00009f">let</span><span class="token plain"> j </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">0</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"> j </span><span class="token operator" style="color:#393A34">&lt;</span><span class="token plain">ㅠ list</span><span class="token punctuation" style="color:#393A34">.</span><span class="token property-access">length</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"> j</span><span class="token operator" style="color:#393A34">++</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">        </span><span class="token keyword control-flow" style="color:#00009f">if</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">list</span><span class="token punctuation" style="color:#393A34">[</span><span class="token plain">j</span><span class="token punctuation" style="color:#393A34">]</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">includes</span><span class="token punctuation" style="color:#393A34">(</span><span class="token number" style="color:#36acaa">1</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">&gt;</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">0</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">          result</span><span class="token punctuation" style="color:#393A34">.</span><span class="token method function property-access" style="color:#d73a49">map</span><span class="token punctuation" style="color:#393A34">(</span><span class="token spread operator" style="color:#393A34">...</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">        </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">      </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token punctuation" style="color:#393A34">}</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="클립보드에 코드 복사" title="복사" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div><blockquote><p>어라 이게 맞나..?</p></blockquote><p>분명히 더 좋게 만들 수 있지 않을까요? 분명 제 js 지식이 부족해서 나온 복잡도라고 생각했습니다.
+그래서 이 기회에 javascript 중에서도 객체 쪽을 좀 더 바삭하게 공부해야겠다는 마음을 먹었습니다.
+일단 배열과 관련된 모든 메소드를 찾아보는 것으로 시작했습니다.
+다양한 javascript 객체들도 찾아보았습니다. 객체가 가질 수 있는 메소드와 특징들도 살펴보았습니다.
+생각보다 객체 하나에 대한 모든 메소드를 차근차근 읽어보는 것도 굉장히 재미있었습니다.
+덕분에 거의 3일 정도를 이 공부 시간을 위해 투자할 수 있었습니다.
+그리고 문제를 다시 보니 <strong>방법이 순간적으로 딱 번뜩</strong>였습니다..!!</p><blockquote><p>이건 <code>dictionary</code>나 <code>Map</code>으로 접근하면 좋을 것 같은데..?</p></blockquote><p>그랬더니 세상에나... 시간 복잡도를 무려 n^2까지 줄일 수 있었습니다. 성취감이 정말 엄청났습니다.
+스스로 해냈다는 뿌듯함 때문에 주말 내내 행복했던 것 같습니다.
+<strong>나도 할 수 있다는 자신감</strong>이 붙기 시작했습니다.</p><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="git은-정말-강력하다">git은 정말 강력하다.<a href="#git은-정말-강력하다" class="hash-link" aria-label="git은 정말 강력하다.에 대한 직접 링크" title="git은 정말 강력하다.에 대한 직접 링크">​</a></h2><p><code>push</code>, <code>commit</code>, <code>pull</code> 같은 기본적인 git을 사용할 줄 알았습니다. 그래서 처음에는 크게 문제가 되지 않았습니다.
+그런데 커밋 후에 커밋 메시지를 변경하고 싶은 게 생겼습니다. 이걸 바꾸려한 것이 문제의 시작이었습니다.</p><p>그 때 문제를 푸느라 잠을 얼마 못자서 그랬는지 정신이 없던 나머지 엄청난 실수를 저질러 버렸습니다...</p><img loading="lazy" src="/img/blog/woowa-precourse-week1-week2/git-hard-reset.png" alt="이미지" style="margin-bottom:20px" class="img_ev3q"><p>아마 체크아웃을 하려고 했던 것 같은데, <strong>하드 리셋</strong> 버튼을 눌렀습니다..🤯
+지금까지 코딩했던 모든게 사라졌습니다. 갑자기 잠이 확 깻습니다..
+git을 믿는 수 밖에 없었습니다. git이라면 이걸 해결 할 수 있을거라고... 그래야만 한다고 굳게 믿었습니다.</p><p>찾아보니 다행히 방법은 있었습니다. 다만, 제 기준으로는 아직 정말 어렵고 어색하게 느껴졌습니다.
+덕분에 시간을 정말 많이 쓰기는 했지만, 그래도 이런 해프닝이 일어나면서 git을 정말 많이 배웠습니다.
+정말이지 git의 강력함을 제대로 경험해 본 사건이었습니다.</p><div class="theme-admonition theme-admonition-info alert alert--info admonition_LlT9"><div class="admonitionHeading_tbUL"><span class="admonitionIcon_kALy"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>정보</div><div class="admonitionContent_S0QG"><p>실제로 2주차 과제에서 이 때 공부했던 git reflog, stash 같은 명령어를 요긴하게 사용했습니다.😋</p></div></div><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="난쟁이가-쏘아올린-작은-단위-테스트">난쟁이가 쏘아올린 작은 단위 테스트<a href="#난쟁이가-쏘아올린-작은-단위-테스트" class="hash-link" aria-label="난쟁이가 쏘아올린 작은 단위 테스트에 대한 직접 링크" title="난쟁이가 쏘아올린 작은 단위 테스트에 대한 직접 링크">​</a></h2><p>테스트 코드를 처음 접해 보았을 때 너무 신기해서 계속 눈여겨 보고 있었습니다.
+때 마침 2주차 미션에서는 테스트 코드에 익숙해 지는 것이 학습 목표였습니다.
+그래서 기쁜 마음으로 테스트에 대해 공부하는 시간을 가졌습니다.</p><p>테스트는 정말 공부하면 공부할수록 <strong>여러가지 나비 효과</strong>를 불러오는 것 같습니다.
+일단 테스트는 함수를 자꾸 <strong>작게 쪼개도록 유도</strong>합니다. 물론 코드를 짜기 전에도 함수를 최대한 분리하려고 마음을 먹기는 했었습니다.
+하지만 테스트를 상세하게 하고 싶다보니 자연스럽게 함수를 작게 자를 수 밖에 없는 환경이 만들어졌습니다.</p><img loading="lazy" src="/img/blog/woowa-precourse-week1-week2/function1.png" alt="이미지" style="margin-bottom:20px" class="img_ev3q"><img loading="lazy" src="/img/blog/woowa-precourse-week1-week2/function2.png" alt="이미지" style="margin-bottom:20px" class="img_ev3q"><p>그러다보니 한 파일에 함수가 20개가 넘어가버렸고, 자연스럽게 위와 같이 <strong>파일을 나눠</strong>주게 되었습니다.
+2주차 미션에는 깊이 2가 초과 되는 들여쓰기도 고려해야 된다고 해서 겁을 먹었는데, 잘게 쪼개진 함수 덕분에 이 요구 사항은 잘 해결할 수 있었습니다.
+함수가 짧다보니 테스트하기에도 간편했습니다.</p><p>테스트를 신경써서 미션을 진행하다 보니 <strong>함수 분리와 들여쓰기 같은 요구사항이 같이 해결</strong> 되었습니다.
+나중에 이렇게 작은 단위로 나누어 테스트를 작성하는 방식을 단위 테스트라고 부른다는 것을 알았습니다.
+이번 3주차 과제에서 단위 테스트 개념이 나온 것을 잠깐 봤는데, 벌써부터 설레네요:)🤭</p><p>이번 테스트를 통해 상당히 많은 것을 알고 배웠습니다.</p><ol><li><p>테스트 코드는 제 코드에 확신을 줍니다.</p></li><li><p>자연스럽게 함수를 분리하게 됩니다.</p></li><li><p>함수가 많아지면서 모듈화를 시키고 파일 분리를 유도합니다.</p></li><li><p>작은 단위로 기능을 바라보는 데 정말 많은 도움이 됩니다.</p></li><li><p>이후에 코드를 깔끔하게 짤 때 기준이 되어주는 느낌입니다.</p><ul><li>이 기준은 테스트하기 좋은 코드라고 할 수 있지 않을까요?</li></ul></li><li><p>다른 사람이 제 코드를 보고서 기능 단위로 이해하는 데에도 굉장히 도움이 많이 될 것이라는 생각이 들었습니다.</p></li></ol><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="소통의-즐거움">소통의 즐거움<a href="#소통의-즐거움" class="hash-link" aria-label="소통의 즐거움에 대한 직접 링크" title="소통의 즐거움에 대한 직접 링크">​</a></h2><p>소통은 너무 즐거운 것 같습니다.😊 이번 프리코스를 하면서 커뮤니티나, github 디스커션에 생각날 때마다 들리고 있습니다.
+이 때마다 원하는 토론 주제나 이야기를 하고 싶은 게 있으면 그에 대해 소통 하는 시간을 가지는게 이번 프리코스를 하면서 얻는 행복 중 하나였습니다.
+<strong>소통하면서 서로 성장</strong>하고 있다고 느낄 때의 기분은 말로 표현하기 힘든 것 같습니다.</p><img loading="lazy" src="/img/blog/woowa-precourse-week1-week2/reaction1.png" alt="이미지" style="margin-bottom:20px" class="img_ev3q"><p>커뮤니티에서 잡담이나 정보를 공유하는 과정에서 소소하게 리액션이 쌓이는 것도 재미있고 보람찼습니다.</p><p>직접 모아놓고 보니 더뿌듯한 것 같습니다.😊</p><img loading="lazy" src="/img/blog/woowa-precourse-week1-week2/review1.png" alt="이미지" style="margin-bottom:20px;margin-top:20px" class="img_ev3q"><p>코드 피어 리뷰도 진행했는데, 열심히 다른 인원들의 코드에 리뷰를 달았더니 꽤 많은 인원이 <a href="https://github.com/woowacourse-precourse/javascript-onboarding/pull/300" target="_blank" rel="noopener noreferrer"><strong>제 코드를 리뷰</strong></a>해주었습니다.
+각자의 생각과 의견에서 많은 정보를 얻을 수 있었습니다.
+중간중간 특정 코드 구조를 칭찬 해 주시기도 했는데 이 때 코드를 열심히 파고든 보람이 느껴져서 너무 행복했습니다.🤗</p><p>한 분은 제 코드를 통해 많이 배워간다며 블로그 포스팅을 작성하는데 활용해도 되냐고 여쭈어 보시기도 했습니다.
+진짜 이렇게 보람차고 즐거운 일이 어디 있을까요?
+이게 우아한형제들에서 말하는 선한 영향력인가 싶습니다.</p><div class="theme-admonition theme-admonition-note alert alert--secondary admonition_LlT9"><div class="admonitionHeading_tbUL"><span class="admonitionIcon_kALy"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg></span>노트</div><div class="admonitionContent_S0QG"><p>위에서 말한 블로그 글이 궁금하시다면 <a href="https://velog.io/@hamham/%EC%9A%B0%ED%85%8C%EC%BD%94-1%EC%A3%BC%EC%B0%A8-%EB%AF%B8%EC%85%98-%ED%9B%84%EA%B8%B0" target="_blank" rel="noopener noreferrer"><strong>이 포스팅</strong></a>을 참고해 주세요!</p></div></div><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="혼자-공부하는-것도-좋지만-같이-성장하는-것도-좋다">혼자 공부하는 것도 좋지만 같이 성장하는 것도 좋다.<a href="#혼자-공부하는-것도-좋지만-같이-성장하는-것도-좋다" class="hash-link" aria-label="혼자 공부하는 것도 좋지만 같이 성장하는 것도 좋다.에 대한 직접 링크" title="혼자 공부하는 것도 좋지만 같이 성장하는 것도 좋다.에 대한 직접 링크">​</a></h2><p>여러 사람들과 깊게 이야기를 나누어보고 싶았고, 미션에 대한 코드 리뷰도 더욱 상세하게 의견을 공유하고 싶었습니다.
+같은 생각을 가진 사람들이 꽤 많았는지, 소수 인원들끼리 스터디를 꾸리는 채널이 생겼습니다.
+그래서 가장 처음으로 생긴 프론트엔드 스터디인 <strong>'(가맹점 1호)프론트엔드 피어리뷰 스터디'</strong>에 재빠르게 참여 의사를 밝혔습니다.</p><p>처음에는 솔직히 아예 모르는 사람들이다 보니 긴장이 되기도 했습니다.
+하지만 그것과는 별개로 더 좋은 리뷰를 해주고 싶은 마음이 컸습니다.
+이번에는 <strong>js 컨벤션을 위주</strong>로 리뷰를 진행해 봐도 좋을 것 같다고 생각했고, 그래서 <a href="https://github.com/airbnb/javascript" target="_blank" rel="noopener noreferrer">js 컨벤션</a>을 처음부터 끝까지 2번 정도 정독하면서 나름 리뷰를 위해 이를 갈았던 것 같습니다.</p><img loading="lazy" src="/img/blog/woowa-precourse-week1-week2/study1.png" alt="이미지" style="margin-bottom:20px" class="img_ev3q"><p>정말 본격적으로 스터디를 진행했습니다.</p><p>과제가 마감되고, 수요일날 모임 전까지 서로의 코드에 대해 리뷰할 점을 찾고, 저녁 시간에 게더타운 안에서 서로의 의견을 공유하는 방식이었습니다.
+어제 처음으로 스터디를 진행했었는데, 다들 정말 꼼꼼히 의견을 공유해 주셔서 <a href="https://github.com/woowacourse-precourse/javascript-baseball/pull/179" target="_blank" rel="noopener noreferrer">코드에 대한 다양한 의견과 피드백</a>을 받을 수 있었습니다.
+다들 초면이었지만, 코드 앞에서는 모두 진심이 되어 의견을 잘 전달해 주셔서 너무 좋았습니다.</p><img loading="lazy" src="/img/blog/woowa-precourse-week1-week2/gather-town1.png" alt="이미지" style="margin-bottom:20px" class="img_ev3q"><img loading="lazy" src="/img/blog/woowa-precourse-week1-week2/gather-town2.png" alt="이미지" style="margin-bottom:4px" class="img_ev3q">스터디원들과 같이 게더타운에서 사진도 찍었어요!😊<br><br><p>클린 코드를 열심히 공부해 클린 코드 관련 의견을 잘 찝어주신 분부터, jest를 열심히 공부해 jest 코드를 열심히 봐주시는 분까지,
+각자 자신있는 분야가 모이고 모이다 보니 정말 좋은 시너지를 냈습니다. 덕분에 <a href="https://hyojaedev.tistory.com/40" target="_blank" rel="noopener noreferrer">내려가기
+규칙</a>, 메서드 네이밍, 의미없는 반환값 등 얻어가는 것이 너무나 많았습니다.</p><div class="theme-admonition theme-admonition-tip alert alert--success admonition_LlT9"><div class="admonitionHeading_tbUL"><span class="admonitionIcon_kALy"><svg viewBox="0 0 12 16"><path fill-rule="evenodd" d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 1.22 0 2.36.42 3.22 1.19C10.55 2.94 11 3.94 11 5c0 .66-.44 1.78-.86 2.48zM4 14h5c-.23 1.14-1.3 2-2.5 2s-2.27-.86-2.5-2z"></path></svg></span>팁</div><div class="admonitionContent_S0QG"><p>코치와 수다 타임(코수타)에서 스터디를 꾸린 인원들이 있다면 이 내용을 공유해 보는 것이 어떻겠냐는 의견을 주셨습니다.
+코치님과 동일하게 스터디원 모두 우리만 나누기에는 정말 아까운 리뷰 내용이라고 생각을 했습니다.
+그래서 다음 주차부터는 <strong>github 디스커션을 통해 리뷰 내용을 여러 사람들에게 공유</strong>해보기로 했습니다!</p></div></div><h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="마치며">마치며<a href="#마치며" class="hash-link" aria-label="마치며에 대한 직접 링크" title="마치며에 대한 직접 링크">​</a></h2><p>이번 프리코스 경험을 통해 스스로 여러 방면으로 성장하고 있음을 많이 느끼고 있습니다.
+지식도 지식이겠지만, 저의 마인드셋도 정말 많이 변하고 개발이 점점 재미있어지는 큰 계기가 되고 있습니다.
+우아한테크코스가 이번 프리코스를 통해 무엇인가에 몰두하는 경험을 체험주고 싶은 의도가 있었다면 대성공이라고 생각합니다.
+이런 뜻 깊은 경험을 선물해준 우아한테크코스를 비롯한 소통에 참여 해주신 모두에게 정말 고맙다는 말을 전하고 싶습니다.</p>]]></content:encoded>
+            <author>smallkdb@gmail.com (minjae Kim)</author>
+            <category>회고</category>
+            <category>우아한테크코스</category>
+            <category>JS</category>
+        </item>
+    </channel>
+</rss>

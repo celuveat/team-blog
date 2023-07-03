@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkceluveat_team_blog=self.webpackChunkceluveat_team_blog||[]).push([[480],{8388:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"\uc6b0\uc544\ud55c \ud14c\ud06c\ucf54\uc2a4 5\uae30\uc5d0 \ud569\ub958\ud558\uba70","permalink":"/team-blog/back-blog/woowa-final"}]}')}}]);
