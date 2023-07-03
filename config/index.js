@@ -2,7 +2,7 @@ const themeConfig = require("./theme");
 const i18n = require("./i18n");
 const config = {
   title: "Celuveat",
-  url: "https://celuveat.com",
+  url: "https://celuveat.github.io/blog/",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
