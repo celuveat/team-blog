@@ -2,13 +2,12 @@ const themeConfig = require("./theme");
 const i18n = require("./i18n");
 const config = {
   title: "Celuveat",
-  url: "https://celuveat.github.io",
-  baseUrl: "/team-blog/",
+  url: "https://celuveat.github.io/team-blog",
+  baseUrl: "",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "../static/img/logo/favicon.ico",
   organizationName: "celuveat", // Usually your GitHub org/user name.
-  trailingSlash: false,
   projectName: "team-blog", // Usually your repo name.
   i18n,
   plugins: [
