@@ -8,6 +8,7 @@ const config = {
   onBrokenMarkdownLinks: "warn",
   favicon: "../static/img/logo/favicon.ico",
   organizationName: "celuveat", // Usually your GitHub org/user name.
+  trailingSlash: false,
   projectName: "blog", // Usually your repo name.
   i18n,
   plugins: [
