@@ -3,13 +3,13 @@ const i18n = require("./i18n");
 const config = {
   title: "Celuveat",
   url: "https://celuveat.github.io",
-  baseUrl: "/blog/",
+  baseUrl: "/team-blog/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "../static/img/logo/favicon.ico",
   organizationName: "celuveat", // Usually your GitHub org/user name.
   trailingSlash: false,
-  projectName: "blog", // Usually your repo name.
+  projectName: "team-blog", // Usually your repo name.
   i18n,
   plugins: [
     [
