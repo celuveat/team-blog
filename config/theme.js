@@ -5,8 +5,8 @@ const navbar = {
   hideOnScroll: true,
   logo: {
     alt: "Logo",
-    src: "img/logo/main-logo.png",
-    srcDark: "img/logos/main-logo.png",
+    src: "img/logo/logo-black.svg",
+    srcDark: "img/logo/logo-white.svg",
     href: "/",
     target: "_self",
   },
