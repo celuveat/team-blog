@@ -57,6 +57,7 @@ const blog = {
 const prism = {
   theme: lightCodeTheme,
   darkTheme: darkCodeTheme,
+  additionalLanguages: ["java", "groovy"]
 };
 
 module.exports = Object.assign({ navbar, footer, prism, blog });
