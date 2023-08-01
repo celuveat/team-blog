@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkceluveat_team_blog=self.webpackChunkceluveat_team_blog||[]).push([[812],{3395:e=>{e.exports=JSON.parse('{"label":"\ud68c\uace0","permalink":"/team-blog/front-blog/tags/\ud68c\uace0","allTagsPath":"/team-blog/front-blog/tags","count":2}')}}]);

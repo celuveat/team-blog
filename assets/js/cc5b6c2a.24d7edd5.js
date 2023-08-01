@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkceluveat_team_blog=self.webpackChunkceluveat_team_blog||[]).push([[9480],{8388:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"OAuth2.0 \ub3c4\uc785\uae30","permalink":"/team-blog/back-blog/mallang/oauth/oauth"},{"title":"\uc140\ub7fd\uc787\uc758 CI/CD","permalink":"/team-blog/back-blog/mallang/cicd/cicd"}]}')}}]);
