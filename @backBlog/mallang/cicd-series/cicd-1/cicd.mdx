@@ -1,8 +1,8 @@
 ---
 date: 2023-07-21
 authors: shin-mallang
-title: "셀럽잇의 CI/CD"
-description: "셀럽잇 팀의 CI/CD를 소개합니다."
+title: "셀럽잇 CI/CD 발전기 - (1)"
+description: "셀럽잇 팀의 CI/CD 발전기"
 keywords: ["CI/CD", "인프라"]
 tags:
   - CI/CD
@@ -11,13 +11,13 @@ tags:
 ---
 
 
-## 서론
+## 🧐 서론
 
 안녕하세요. 셀럽잇의 백엔드 말랑입니다.
 
 셀럽잇 팀의 CI/CD 아키텍처를 소개해 드리기 위해 찾아왔습니다 😎
 
-셀럽잇 팀은 주어진 제약 내에서 배포 자동화를 달성하기 위해 많은 고민을 하였고, 최종적으로 다음과 같은 CI/CD 아키텍처를 도입하였습니다.
+셀럽잇 팀은 주어진 제약 내에서 배포 자동화를 달성하기 위해 많은 고민을 하였고, 일차적으로 다음과 같은 CI/CD 아키텍처를 도입하였습니다.
 
 <br/>
 
@@ -34,15 +34,16 @@ tags:
 <br/>
 <br/>
 
-## 제약조건과 요구사항
+## 🧐 제약조건과 요구사항
 
-### 컴퓨팅 파워
+### 🖥️ 컴퓨팅 파워
 - 서버 개수: 최대 3대
 - 서버 사양: 최대 t4g.small
 - 스토리지: 최대 20GiB
 
+<br/>
 
-### 요구사항
+### 📃 요구사항
 - 개발 서버와 프로덕션 서버의 분리
 
 
@@ -51,7 +52,7 @@ tags:
 <br/>
 <br/>
 
-## 셀럽잇 팀의 git 브랜치 전략
+## 🧐 셀럽잇 팀의 git 브랜치 전략
 CI/CD 아키텍처에 대한 소개 전에, 원할한 설명을 위하여 저희 팀의 git 브랜치 전략에 대해 우선 소개하도록 하겠습니다.
 
 셀럽잇 팀은 gitflow 전략을 조금 수정하여 다음과 같이 5개의 브랜치를 사용합니다.
@@ -63,13 +64,13 @@ CI/CD 아키텍처에 대한 소개 전에, 원할한 설명을 위하여 저희
 
 <br/>
 
-### main 브랜치
+### 🐳 main 브랜치
 `main` 브랜치에 존재하는 코드는 실제 서비스될 코드이기 때문에 항상 배포 가능한 상태여야 하며 기능이 완전히 구현된 상태여야 합니다.<br/>
 `main` 브랜치는 `develop-backend` 브랜치와 `develop-frontend` 브랜치에서 기능들이 완성한 이후 `merge`됩니다.
 
 <br/>
 
-### develop-[backend/frontend] 브랜치
+### 🐳 develop-[backend/frontend] 브랜치
 git flow의 `develop` 브랜치를 저희의 상황에 맞게 재구성한 브랜치로,
 백엔드와 프론트엔드가 각각 서로의 영향을 받지 않고 개발을 이어갈 수 있도록 하기 위하여 위와 같이 구성하였습니다.
 
@@ -83,14 +84,14 @@ git flow의 `develop` 브랜치를 저희의 상황에 맞게 재구성한 브�
 
 <br/>
 
-### feature 브랜치
+### 🐳 feature 브랜치
 `feature` 브랜치는 기능을 개발하는 브랜치로, 기본적으로 `이슈`와 1대1 매핑 됩니다.<br/>
 개발해야 하는 기능들에 대하여 먼저 이슈를 생성하면, 각 이슈별 담당자가 이슈에 대응되는 `feature` 브랜치를 생성합니다.<br/>
 기능을 개발되면 `feature` 브랜치에서 `develop` 브랜치에 `PR`을 날립니다.
 
 <br/>
 
-### hotfix 브랜치
+### 🐳 hotfix 브랜치
 `hotfix` 브랜치는 `main` 브랜치에서 발생한 버그를 급하게 수정해야 하는 경우 사용하는 브랜치입니다.<br/>
 이때 `hotfix` 브랜치의 변경 사항은 `main` 브랜치와 `develop` 브랜치에 모두 반영됩니다.
 
@@ -100,7 +101,7 @@ git flow의 `develop` 브랜치를 저희의 상황에 맞게 재구성한 브�
 <br/>
 <br/>
 
-## CI 기술 선택과 구축
+## 🧐 CI 기술 선택과 구축
 저희 팀은 CI를 위해 `Github Actions`를 사용하기로 결정했습니다.
 
 `Github Actions`가 `Jenkins`에 비해 학습 & 적용하기 쉽다고 판단했으며, `Github Actions` 만으로도 원하는 기능을 모두 사용할 수 있었기에 굳이 `Jenkins`를 사용할 이유가 없었습니다.
@@ -111,15 +112,24 @@ git flow의 `develop` 브랜치를 저희의 상황에 맞게 재구성한 브�
 
 <br/>
 
-### 백엔드 CI workflow
+### 🐳 백엔드 CI workflow
 ```yml
 name: ✨ Celuveat Backend CI ✨
 
 on:
   push:
-    branches: [ "develop-backend" ]
+    branches:
+      - develop-backend
+      - main
+    paths:
+      - 'backend/**'
+
   pull_request:
-    branches: [ "develop-backend" ]
+    branches:
+      - develop-backend
+      - main
+    paths:
+      - 'backend/**'
 
 permissions:
   checks: write
@@ -165,16 +175,26 @@ jobs:
 이러한 설정에 대한 자세한 내용은 [말랑이의 블로그](https://ttl-blog.tistory.com/1350)를 참고해주세요.
 
 <br/>
+<br/>
 
-### 프론트엔드 CI workflow
+### 🐳 프론트엔드 CI workflow
 ```yml
 name: 🍔 Celuveat Frontend CI 🍔
 
 on:
   push:
-    branches: [ "develop-frontend" ]
+    branches:
+      - develop-frontend
+      - main
+    paths:
+      - 'frontend/**'
+
   pull_request:
-    branches: [ "develop-frontend" ]
+    branches:
+      - develop-frontend
+      - main
+    paths:
+      - 'frontend/**'
 
 jobs:
   frontend-test:
@@ -210,17 +230,11 @@ jobs:
 <br/>
 <br/>
 <br/>
-
-### 통합(main) CI workflow
-**(아직 작성하지 않았습니다 😎)**
-
-<br/>
-<br/>
-<br/>
 <br/>
 
 
-## CD 기술 선택과 구축
+
+## 🧐 CD 기술 선택과 구축
 처음에는 CD를 위한 기술로써 `Jenkins`를 사용하려 했습니다.
 저를 포함한 몇몇 팀원들이 이미 경험해 본 기술이었기 때문에, 적용하는데 큰 어려움이 없을 것이라 판단했었습니다.
 
@@ -230,7 +244,7 @@ jobs:
 <br/>
 
 
-### Jenkins 대신 Github Actions를 사용한 이유
+### 🐳 Jenkins 대신 Github Actions를 사용한 이유
 
 제약조건 속에는 다음과 같은 항목이 존재했습니다.
 - 서버 개수: 최대 3대
@@ -258,14 +272,14 @@ RAM이 2GB밖에 안되기 때문에 메모리를 최대한 적게 사용하는 
 <br/>
 <br/>
 
-### 참고 - 메모리 사용량 비교
+### 🐳 참고 - 메모리 사용량 비교
 비교 시 공통 사항은 다음과 같습니다.
 - Swap 메모리 1.5 GB 할당
 - java 17 버전 설치
 
 <br/>
 
-#### 기본적인 서버의 메모리 사용량
+#### 🚀 기본적인 서버의 메모리 사용량
 
 자바만을 깔아둔 서버의 메모리 사용량은 다음과 같습니다.
 ![basic-java](./자바설치기본상태.png)
@@ -273,12 +287,11 @@ RAM이 2GB밖에 안되기 때문에 메모리를 최대한 적게 사용하는 
 <br/>
 <br/>
 
-#### Github Actions self-hosted runner
+#### 🚀 Github Actions self-hosted runner
 
 단순 Runner 설치 후 실행 상태입니다.
 ![actions-basic](./깃헙액션기본.png)
 
-<br/>
 <br/>
 
 웹훅으로 runner가 동작하여 bootJar을 실행할 때의 최대 메모리 사용량입니다.
@@ -288,7 +301,7 @@ RAM이 2GB밖에 안되기 때문에 메모리를 최대한 적게 사용하는 
 <br/>
 
 
-#### Jenkins
+#### 🚀 Jenkins
 
 Jenkins 설치 후 단순 실행 상태입니다.
 ![jenkins-basic](./jenkins기본.png)
@@ -296,6 +309,7 @@ Jenkins 설치 후 단순 실행 상태입니다.
 웹훅으로 젠킨스가 동작하여 bootJar을 실행할 때의 최대 메모리 사용량입니다.
 ![jenkins-max](./jenkins최대.png)
 
+<br/>
 <br/>
 <br/>
 
@@ -307,9 +321,10 @@ Jenkins 설치 후 단순 실행 상태입니다.
 <br/>
 <br/>
 <br/>
+<br/>
 
 
-### 백엔드 CD workflow
+### 🐳 백엔드 DEV용 CD workflow
 ```yml
 name: ✨ Celuveat backend DEV CD ✨
 
@@ -328,14 +343,14 @@ jobs:
       - name: ✨ Run Backend Deploy Script
         run: |
           cd ~
-          sudo ./deploy-backend.sh
+          sudo sh deploy-backend.sh
 ```
 
 <br/>
 <br/>
 <br/>
 
-### 백엔드 배포 스크립트
+### 🐳 백엔드 DEV용 배포 스크립트
 ```bash
 #!/bin/sh
 
@@ -400,7 +415,7 @@ nohup java -jar $PROJECT_PATH/$PROJECT_NAME/$BUILD_PATH/$JAR_NAME > /home/ubuntu
 <br/>
 <br/>
 
-### 프론트엔드 CD workflow
+### 🐳 프론트엔드 DEV용 CD workflow
 ```yml
 name: 🍔 Celuveat frontend DEV CD 🍔
 
@@ -424,7 +439,7 @@ jobs:
       - name: 🍔 Run Frontend Deploy Script
         run: |
           cd ~
-          sudo ./deploy-frontend.sh
+          sudo sh deploy-frontend.sh
 ```
 
 
@@ -434,7 +449,7 @@ jobs:
 <br/>
 <br/>
 
-### 프론트엔드 배포 스크립트
+### 🐳 프론트엔드 DEV용 배포 스크립트
 ```bash
 #!/bin/sh
 
@@ -492,13 +507,14 @@ nohup yarn start -- --port $PORT > /home/ubuntu/log/frontend/$FRONTEND_LOG_FILE 
 <br/>
 <br/>
 
-## 마무리
+## 😎 마무리
 
 이렇게 해서 셀럽잇 팀의 CI/CD 아키텍처를 살펴보았습니다.
 이것보다 더 좋은 대안이 있을 수도 있겠지만, 빠르게 개발을 진행해야 하는 상황과,
 팀원 대부분이 지식이 별로 없는 상태에서 적용하기 수월한 구조를 찾다 보니 이러한 구조로 귀결된 것 같습니다.
 
-부족한 내용은 차근차근 추가하도록 하겠습니다.
+아직 작성되지 않은 실제 프로덕트용 CD Workflow는 다음 글에서 작성하도록 하겠습니다.
+
 읽어주셔서 감사합니다 😊
 
 
