@@ -9,13 +9,17 @@ tags:
   - 소셜 로그인
 ---
 
-<br/>
-<br/>
+OAuth2.0 도입기
+
+<!--truncate-->
+
+<br />
+<br />
 
 > 이 글은 백엔드 크루 말랑이가 작성했기 때문에, 프론트 코드는 다소 엉망진창일 수 있습니다.
 
-<br/>
-<br/>
+<br />
+<br />
 
 OAuth2.0의 개념에 대해서는 이미 많은 블로그들에서 다루고 있으므로 해당 글에서는 다루지 않음을 먼저 밝힙니다.
 
@@ -25,10 +29,10 @@ OAuth2.0의 개념에 대해서는 이미 많은 블로그들에서 다루고 �
 
 소스 코드는 [해당 Repository](https://github.com/shin-mallang/oauth-login-sample) 에서 확인하실 수 있습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 OAuth 2.0 플로우 정리
 
@@ -46,10 +50,10 @@ OAuth2.0 에 대해 설명하는 글들을 찾아보면, 이들의 역할을 단
 
 그래서 저는 프론트엔드 개발자와 백엔드 개발자의 역할을 조금 더 구분지어 Client의 역할에 집중하고자 합니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 구현하는 방법
 
@@ -59,10 +63,9 @@ OAuth2.0 을 통한 로그인을 구현하는 방법은 크게 **Redirect URI**�
 
 (이때 모든 상황에서 회원가입 & 로그인을 한다는 가정을 통해 장점과 단점을 알아보도록 하겠습니다. 회원가입 플로우는 위 그림과 동일합니다.)
 
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
 
 ### 🐳 Redirect URI를 백엔드로 설정하기
 
@@ -72,7 +75,7 @@ OAuth2.0 을 통한 로그인을 구현하는 방법은 크게 **Redirect URI**�
 >
 > 2\. (버튼을 누르면) 프론트엔드는 백엔드의 특정 URI로 요청을 보낸다.
 >
-> 3\. 백엔드는 이를 처리하여 cliend\_id, redirect\_uri 등을 포함하여 카카오 인증 서버(Authorization Server)의 Auth Code 발급 URL로 Redirect 시킨다.
+> 3\. 백엔드는 이를 처리하여 cliend_id, redirect_uri 등을 포함하여 카카오 인증 서버(Authorization Server)의 Auth Code 발급 URL로 Redirect 시킨다.
 > 이렇게 되면 카카오 인증 서버에서 사용자에게 로그인 페이지를 제공한다.
 >
 > 4\. 사용자가 로그인을 진행하고, 정보 사용에 동의한다.
@@ -80,10 +83,11 @@ OAuth2.0 을 통한 로그인을 구현하는 방법은 크게 **Redirect URI**�
 > 5\. 해당 정보는 Authorization Server에 전달되며, 이후 사전에 등록한 백엔드의 Redirect URI로 Auth Code와 함께 Redirected 된다.
 >
 > 6\. 백엔드는 @GetMapping 등으로 Redirect URI로 들어오는 요청을 처리하도록 구현한다.
->  - 요청의 Query String으로부터 Code를 추출한다.
->  - 해당 Code를 가지고 AccessToken을 받아온다.
->  - 해당 AccessToken을 통해 사용자 정보를 받아와 회원가입&로그인 시킨다.
->  - 로그인 이후 발급된 인증 정보(session 혹은 token)을 쿼리 파라미터로 추가하여 프론트엔드의 로그인 성공을 처리하는 URL로 Redirect 시킨다.
+>
+> - 요청의 Query String으로부터 Code를 추출한다.
+> - 해당 Code를 가지고 AccessToken을 받아온다.
+> - 해당 AccessToken을 통해 사용자 정보를 받아와 회원가입&로그인 시킨다.
+> - 로그인 이후 발급된 인증 정보(session 혹은 token)을 쿼리 파라미터로 추가하여 프론트엔드의 로그인 성공을 처리하는 URL로 Redirect 시킨다.
 
 Redirect URI를 백엔드로 설정하면, 프론트는 아무런 처리를 하지 않아도 됩니다.
 
@@ -103,15 +107,14 @@ Redirect URI를 백엔드로 설정하면, 프론트는 아무런 처리를 하�
 
 즉 이 방법의 특징을 정리하면 다음과 같습니다.
 
--   인증 정보(토큰, 세션)을 Query String으로 전달하는 방법밖에 없다.
--   안드로이드와 같이 Redirect 할 수 없는 모바일 환경에서는 사용할 수 없다.
-
+- 인증 정보(토큰, 세션)을 Query String으로 전달하는 방법밖에 없다.
+- 안드로이드와 같이 Redirect 할 수 없는 모바일 환경에서는 사용할 수 없다.
 
 이제 Redirect URI를 프론트엔드로 설정하는 방법에 대해 알아보겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 Redirect URI를 프론트엔드로 설정하기
 
@@ -121,39 +124,39 @@ Redirect URI를 백엔드로 설정하면, 프론트는 아무런 처리를 하�
 >
 > 2\. (버튼을 누르면) 프론트엔드는 백엔드의 특정 URI로 요청을 보낸다.
 >
-> 3\. 백엔드는 이를 처리하여 cliend\_id, redirect\_uri 등을 포함하여 카카오 인증 서버(Authorization Server)의 Auth Code 발급 URL로  Redirect 시킨다. 
+> 3\. 백엔드는 이를 처리하여 cliend_id, redirect_uri 등을 포함하여 카카오 인증 서버(Authorization Server)의 Auth Code 발급 URL로  Redirect 시킨다. 
 > 이렇게 되면 카카오 인증 서버에서 사용자에게 로그인 페이지를 제공한다.
 >
-> 4\. 사용자가 로그인을 진행하고, 정보 사용에 동의한다.    --- 여기까지 동일
+> 4\. 사용자가 로그인을 진행하고, 정보 사용에 동의한다. --- 여기까지 동일
 >
 > 5\. 해당 정보는 Authorization Server에 전달되며, 이후 사전에 등록한 **프론트엔드**의 Redirect URI로 Auth Code와 함께 Redirected 된다.
 >
 > 6\. 프론드엔드는 해당 Redirect URI로 요청이 들어오면, Query String에서 code를 추출하여 백엔드의 code를 통해 회원가입 & 로그인을 진행하는 API로 요청을 전송한다.
 >
 > 7\. 백엔드는 @PostMapping(Get도 상관없고 뭐 아무튼) 등으로 해당 요청을 처리(code를 통해 회원가입 & 로그인)한다.
->  - 요청의 Query String으로부터 Code를 추출한다.
->  - 해당 Code를 가지고 AccessToken을 받아온다.
->  - 해당 AccessToken을 통해 사용자 정보를 받아와 회원가입&로그인 시킨다.
->  - 로그인 이후 발급된 인증 정보(session 혹은 token)을 Header, Cookie, Body 등에 담에 프론트엔드에 반환한다.
+>
+> - 요청의 Query String으로부터 Code를 추출한다.
+> - 해당 Code를 가지고 AccessToken을 받아온다.
+> - 해당 AccessToken을 통해 사용자 정보를 받아와 회원가입&로그인 시킨다.
+> - 로그인 이후 발급된 인증 정보(session 혹은 token)을 Header, Cookie, Body 등에 담에 프론트엔드에 반환한다.
 
-<br/>
+<br />
 
 위 방법은 Redirect URI를 백엔드로 설정했을 때의 단점을 모두 해결합니다.
 
 즉 이 방법의 특징은 다음과 같습니다.
 
--   인증 정보(토큰, 세션)을 여러 방법(Query String, Header, Body)으로 전달할 수 있다.
--   안드로이드와 같이 Redirect 할 수 없는 모바일 환경에서도 사용할 수 있다.
+- 인증 정보(토큰, 세션)을 여러 방법(Query String, Header, Body)으로 전달할 수 있다.
+- 안드로이드와 같이 Redirect 할 수 없는 모바일 환경에서도 사용할 수 있다.
 
 이제부터 해당 방법을 통해 회원가입 & 로그인을 진행하는 코드를 작성해 보도록 하겠습니다.
 
 우선 제일 쉬운 카카오부터 시작하도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 카카오 Developers에 애플리케이션 등록
 
@@ -163,41 +166,39 @@ Kakao Developers([https://developers.kakao.com/](https://developers.kakao.com/))
 
 **내 애플리케이션**을 클릭합니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ![kakao2](./kakao2.png)
 
 **애플리케이션 추가하기**를 클릭합니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ![kakao3](./kakao3.png)
 
 **앱 이름**과 **사업자명**을 입력합니다.
 
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
 
 ![kakao4](./kakao4.png)
 
 **앱 설정** - **요약 정보** 화면에 보이는 **REST API** **키** 를 어디엔가 적어두세요!
 
-해당 키를 **client\_id**라고 부릅니다.
+해당 키를 **client_id**라고 부릅니다.
 
 저는 이제부터 이를 **mallang-kakao-client-id** 로 가정하고 진행하겠습니다.
 
 (생각해보니 어차피 노출되는 값이라 굳이 가릴 필요는 없었네용..)
 
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
 
 ![kakao5](./kakao5.png)
 
@@ -205,10 +206,9 @@ Kakao Developers([https://developers.kakao.com/](https://developers.kakao.com/))
 
 이후 **Redirect URI 등록** 버튼을 클릭해주세요.
 
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
 
 ![kakao6](./kakao6.png)
 
@@ -216,17 +216,17 @@ Redirect URI를 프론트엔드로 설정할 것이므로, auth code를 통해 �
 
 그냥 저 따라 **http://localhost:3000/oauth/redirected/kakao** 를 설정하는 것이, 앞으로 코드 진행을 따라오는 것에 있어서 제일 쉽기 때문에, 일단 따라 하시는 것을 추천합니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ![kakao7](./kakao7.png)
 
 **카카오 로그인** - **보안**으로 이동하여 **Client Secret**을 생성해줍니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ![kakao8](./kakao8.png)
 
@@ -234,20 +234,19 @@ Redirect URI를 프론트엔드로 설정할 것이므로, auth code를 통해 �
 
 저는 이제부터 이를 **mallang-kakao-secret-key** 로 부르도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
 
 ![kakao9](./kakao9.png)
 
 **카카오 로그인** - **동의항목**으로 이동합니다.
 
-이곳에서는 사용할 사용자의 정보를 설정해주면 되는데요, 이번 실습에서는 **닉네임**(profile\_nickname)과 **프로필 사진**(profile\_image)만을 설정하도록 하겠습니다.
+이곳에서는 사용할 사용자의 정보를 설정해주면 되는데요, 이번 실습에서는 **닉네임**(profile_nickname)과 **프로필 사진**(profile_image)만을 설정하도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ![kakao10](./kakao10.png)
 
@@ -255,18 +254,18 @@ Redirect URI를 프론트엔드로 설정할 것이므로, auth code를 통해 �
 
 여기까지 하면 기본적인 설정이 끝났고, 여기서 생성한 정보들을 정리하면 다음과 같습니다.
 
-> REST API 키(client\_id) :  mallang-kakao-client-id<br/>
+> REST API 키(client_id) : mallang-kakao-client-id<br/>
 > Client Secret : mallang-kakao-secret-key<br/>
-> Redirect URI :  http://localhost:3000/oauth/redirected/kakao<br/>
-> 동의 항목 :  닉네임(profile\_nickname), 프로필 사진(profile\_image)
+> Redirect URI : http://localhost:3000/oauth/redirected/kakao<br/>
+> 동의 항목 : 닉네임(profile_nickname), 프로필 사진(profile_image)
 
 이제 프론트엔드 코드를 작성하도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 프론트엔드 코드 작성 (React)
 
@@ -276,47 +275,48 @@ Redirect URI를 프론트엔드로 설정할 것이므로, auth code를 통해 �
 
 ![code1](./code1.png)
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### index.js
 
 ```js
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-        <App />
-);
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
 ```
 
 이건 메인 페이지입니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### App.js
 
 ```js
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./LoginPage";
 import KakaoRedirectPage from "./KakaoRedirectPage";
 
 const App = () => {
-    return (
-        <div className='App'>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<LoginPage />}></Route>
-                    <Route path="/oauth/redirected/kakao" element={<KakaoRedirectPage />}></Route>
-                </Routes>
-            </BrowserRouter>
-        </div>
-    );
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginPage />}></Route>
+          <Route
+            path="/oauth/redirected/kakao"
+            element={<KakaoRedirectPage />}
+          ></Route>
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 };
 
 export default App;
@@ -330,30 +330,42 @@ export default App;
 
 (저는 Redirect URI를 http://localhost:3000**/oauth/**redirected**/kakao**로 설정했었습니다.)
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### LoginPage.js
 
 ```js
-import React from 'react';
+import React from "react";
 
 const LoginPage = () => {
-    const handleButtonClick = () => {
-        window.location.href = 'http://localhost:8080/oauth/kakao';
-    };
+  const handleButtonClick = () => {
+    window.location.href = "http://localhost:8080/oauth/kakao";
+  };
 
-    return (
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-            <button
-                onClick={handleButtonClick}
-                style={{padding: '10px 20px', fontSize: '18px', borderRadius: '5px', cursor: 'pointer'}}
-            >
-               카카오톡 로그인
-            </button>
-        </div>
-    );
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <button
+        onClick={handleButtonClick}
+        style={{
+          padding: "10px 20px",
+          fontSize: "18px",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        카카오톡 로그인
+      </button>
+    </div>
+  );
 };
 
 export default LoginPage;
@@ -361,49 +373,51 @@ export default LoginPage;
 
 그냥 카카오톡 로그인 버튼 하나 있는 페이지입니다.
 
-로그인 버튼을 누르면 http://localhost:8080**/oauth/kakao**로 이동하게 되는데요, 이는 백엔드에서 처리하며 cliend\_id, redirect\_uri 등을 포함하여 **카카오 로그인 페이지로 Redirect** 시켜줍니다.
+로그인 버튼을 누르면 http://localhost:8080**/oauth/kakao**로 이동하게 되는데요, 이는 백엔드에서 처리하며 cliend_id, redirect_uri 등을 포함하여 **카카오 로그인 페이지로 Redirect** 시켜줍니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### KakaoRedirectPage.js
 
 ```js
-import React, {useEffect} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const KakaoRedirectPage = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    const handleOAuthKakao = async (code) => {
-        try {
-            // 카카오로부터 받아온 code를 서버에 전달하여 카카오로 회원가입 & 로그인한다
-            const response = await axios.get(`http://localhost:8080/oauth/login/kakao?code=${code}`);
-            const data = response.data; // 응답 데이터
-            alert("로그인 성공: " + data)
-            navigate("/success");
-        } catch (error) {
-            navigate("/fail");
-        }
-    };
+  const handleOAuthKakao = async (code) => {
+    try {
+      // 카카오로부터 받아온 code를 서버에 전달하여 카카오로 회원가입 & 로그인한다
+      const response = await axios.get(
+        `http://localhost:8080/oauth/login/kakao?code=${code}`
+      );
+      const data = response.data; // 응답 데이터
+      alert("로그인 성공: " + data);
+      navigate("/success");
+    } catch (error) {
+      navigate("/fail");
+    }
+  };
 
-    useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const code = searchParams.get('code');  // 카카오는 Redirect 시키면서 code를 쿼리 스트링으로 준다.
-        if (code) {
-            alert("CODE = " + code)
-            handleOAuthKakao(code);
-        }
-    }, [location]);
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const code = searchParams.get("code"); // 카카오는 Redirect 시키면서 code를 쿼리 스트링으로 준다.
+    if (code) {
+      alert("CODE = " + code);
+      handleOAuthKakao(code);
+    }
+  }, [location]);
 
-    return (
-        <div>
-            <div>Processing...</div>
-        </div>
-    );
+  return (
+    <div>
+      <div>Processing...</div>
+    </div>
+  );
 };
 
 export default KakaoRedirectPage;
@@ -419,10 +433,10 @@ export default KakaoRedirectPage;
 
 구체적인 동작 과정은 백엔드 코드까지 작성한 뒤 살펴보겠습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 백엔드 코드 작성 (Spring)
 
@@ -430,9 +444,9 @@ export default KakaoRedirectPage;
 
 ![code2](./code2.png)
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 build.gradle
 
@@ -492,9 +506,9 @@ tasks.named('compileJava') {
 
 별다른 설명 없이 넘어가도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 application.yml
 
@@ -522,9 +536,9 @@ spring:
 
 초기 설정은 끝났고, 이제부터 코드를 작성할 것인데요, 처음에는 간단히 구현한 뒤 리팩토링 하는 과정을 보여드릴까 싶었지만 너무 루즈해질 수 있을 것 같아서, 조금 복잡하더라도 최종 형태의 코드를 보여드리도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 구현 순서
 
@@ -546,18 +560,18 @@ spring:
 
 위 과정을 진행하며 확장에 유연한 코드를 작성하고, 이후 Naver도 추가해보며 얼마나 간단하게 추가할 수 있는지를 살펴보도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 최종 구조 미리 살펴보기
 
 ![code3](./code3.png)
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 1. /oauth/kakao으로 접속하면 카카오톡 로그인 화면으로 Redirect 시킨다.
 
@@ -585,9 +599,9 @@ public enum OauthServerType {
 
 이제 OauthServerType별로 해당 서비스의 Auth Code를 받아오는 URL을 생성해주는 기능을 작성하도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ AuthCodeRequestUrlProvider
 
@@ -618,35 +632,35 @@ provide()를 통해 URL을 생성하여 반환하며, 해당 주소로 Redirect 
 
 Kakao에서 Auth Code를 받아오기 위한 API는 다음 링크([https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-code](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-code))에 나와있습니다.
 
-<br/>
+<br />
 
 ![kakao api1](./kakao_api1.png)
 ![kakao api2](./kakao_api2.png)
 
 아래의 저희가 설정한 정보를 기준으로,
 
-> REST API 키(client\_id) : mallang-kakao-client-id<br/>
+> REST API 키(client_id) : mallang-kakao-client-id<br/>
 > Client Secret : mallang-kakao-secret-key<br/>
 > Redirect URI : http://localhost:3000/oauth/redirected/kakao<br/>
-> 동의 항목 : 닉네임(profile\_nickname), 프로필 사진(profile\_image)
+> 동의 항목 : 닉네임(profile_nickname), 프로필 사진(profile_image)
 
-<br/>
+<br />
 
 필수값만 사용한다고 가정했을 때, 다음과 같은 URL로 요청을 보내야 합니다.
 
 > https://kauth.kakao.com/oauth/authorize<br/>
-> ?response\_type=code<br/>
-> &client\_id=mallang-kakao-client-id<br/>
-> &redirect\_uri=http://localhost:3000/oauth/redirected/kakao<br/>
-> &scope=profile\_nickname,profile\_image
+> ?response_type=code<br/>
+> &client_id=mallang-kakao-client-id<br/>
+> &redirect_uri=http://localhost:3000/oauth/redirected/kakao<br/>
+> &scope=profile_nickname,profile_image
 
-<br/>
+<br />
 
 이에 맞게 구현한 구현체는 다음과 같습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ KakaoAuthCodeRequestUrlProvider
 
@@ -684,12 +698,12 @@ public class KakaoAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvid
 }
 ```
 
-<br/>
+<br />
 
 이때 KakaoOauthConfig는 저의가 설정한 정보를 담고 있는 클래스로, 다음과 같습니다.
 
-<br/>
-<br/>
+<br />
+<br />
 
 ### ✨ KakaoOauthConfig
 
@@ -710,9 +724,9 @@ public record KakaoOauthConfig(
 
 **application.yml**에 **oauth.kakao**로 설정된 정보들을 통해 생성됩니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ application.yml 수정
 
@@ -735,7 +749,6 @@ spring:
     hibernate:
       ddl-auto: create
 
-
 # 추가
 oauth:
   kakao:
@@ -747,9 +760,9 @@ oauth:
 
 그리고 @ConfigurationProperties를 사용하기 위해서는 @ConfigurationPropertiesScan이 필요합니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthApplication 수정
 
@@ -771,12 +784,11 @@ public class OauthApplication {
 }
 ```
 
-
 이제 이를 사용해야겠죠?
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ AuthCodeRequestUrlProviderComposite
 
@@ -824,9 +836,9 @@ Composite 패턴을 조금 변형하여 OauthServerType의 종류에 따라, 이
 
 이제 이를 사용하여 URL을 실제로 만들어내는 Service 코드를 살펴보겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthService
 
@@ -854,9 +866,9 @@ OauthServerType을 받아서 해당 인증 서버에서 Auth Code를 받아오�
 
 이를 사용하는 Controller 코드는 다음과 같습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthController
 
@@ -908,9 +920,9 @@ public class OauthController {
 
 아래 Converter 구현을 잠깐 살펴보고, 여기까지의 동작을 살펴보도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthServerTypeConverter
 
@@ -933,9 +945,9 @@ String을 OauthServerType으로 변환해줍니다.
 
 그리고 이를 적용하기 위해서는 다음과 같이 WebConfigurer를 구현하여 추가해주어야 합니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ WebConfig
 
@@ -978,9 +990,9 @@ public class WebConfig implements WebMvcConfigurer {
 
 CORS 설정까지 미리 해주었습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 😎 중간 점검 - 동작 확인하기
 
@@ -996,7 +1008,8 @@ http://localhost:3000으로 접속합니다.
 
 (이를 클릭하면, 백엔드에서 Kakao 인증 서버에서 Auth code를 가져오기 위한 URL로 리다이렉트 시켜줍니다.)
 
-<br/><br/>
+<br />
+<br />
 
 ![kakao_sample3](./kakao_sample3.png)
 
@@ -1004,8 +1017,8 @@ http://localhost:3000으로 접속합니다.
 
 아이디와 비밀번호를 입력하고 진행합니다.
 
-<br/><br/>
-
+<br />
+<br />
 
 ![kakao_sample4](./kakao_sample4.png)
 
@@ -1016,18 +1029,19 @@ http://localhost:3000으로 접속합니다.
 이를 [URL Decode](https://www.urldecoder.org/)를 통해 디코딩하면 다음과 같습니다.
 
 > https://kauth.kakao.com/oauth/authorize
-> ?scope=profile\_nickname,profile\_image
-> &response\_type=code
-> &redirect\_uri=http://localhost:3000/oauth/redirected/kakao
-> &through\_account=true     <-- 예는 로그인 하고 들어오면 자동 추가됩니다. 무시하세요
-> &client\_id=REST API ID
-> &additional\_auth\_login=true  <-- 예는 로그인 하고 들어오면 자동 추가됩니다. 무시하세요
+> ?scope=profile_nickname,profile_image
+> &response_type=code
+> &redirect_uri=http://localhost:3000/oauth/redirected/kakao
+> &through_account=true <-- 예는 로그인 하고 들어오면 자동 추가됩니다. 무시하세요
+> &client_id=REST API ID
+> &additional_auth_login=true <-- 예는 로그인 하고 들어오면 자동 추가됩니다. 무시하세요
 
 백엔드에서 설정해준 URL이 잘 작동하는 것을 확인할 수 있습니다.
 
 **동의하고 계속하기**를 클릭해보겠습니다.
 
-<br/><br/>
+<br />
+<br />
 
 ![kakao_sample5](./kakao_sample5.png)
 
@@ -1035,23 +1049,22 @@ Auth Code까지 잘 받아온 것을 알 수 있습니다.
 
 이제 그 다음 단계인 Auth Code를 통해 카카오 인증 서버로부터 AccessToken을 받아오는 코드를 작성해 보도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 2. Auth Code를 통해 카카오 인증 서버로부터 AccessToken을 받아온다
 
 우선 카카오 인증 서버가 제공하는 AccessToken을 받아오기 위한 API는 다음 링크([https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token))에 나와있습니다.
 
-<br/>
+<br />
 
 ![kakao_api3](./kakao_api3.png)
 
 ![kakao_api4](./kakao_api4.png)
 
 ![kakao_api5](./kakao_api5.png)
-
 
 이에 맞게 카카오 인증 서버에 요청을 보내고 응답을 받아오는 과정을 구현하도록 하겠습니다.
 
@@ -1061,9 +1074,9 @@ Auth Code까지 잘 받아온 것을 알 수 있습니다.
 
 우선 위 요청의 응답을 객체로 받아오기 위해 DTO를 생성하도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ KakaoToken
 
@@ -1086,11 +1099,11 @@ public record KakaoToken(
 }
 ```
 
-@JsonNaming(SnakeCaseStrategy.class)를 통해 token\_type과 같은 응답을 tokenType으로 받아올 수 있습니다.
+@JsonNaming(SnakeCaseStrategy.class)를 통해 token_type과 같은 응답을 tokenType으로 받아올 수 있습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ KakaoApiClient
 
@@ -1119,9 +1132,9 @@ public interface KakaoApiClient {
 
 위처럼 인터페이스를 통해 바로 사용할 수 있지만, 한가지 추가 작업이 필요합니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ HttpInterfaceConfig
 
@@ -1156,10 +1169,9 @@ public class HttpInterfaceConfig {
 
 아직 구현하지 않은 클래스들이 많기에 여기서 바로 다음으로 넘어가겠지만, 다음과 같이 사용할 것임을 참고를 위해 남겨두겠습니다.\
 
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
 
 ```java
 @Component
@@ -1188,10 +1200,10 @@ public class KakaoMemberClient implements OauthMemberClient {
 }
 ```
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 3. AccessToken을 통해 사용자 정보를 받아온다
 
@@ -1199,7 +1211,7 @@ public class KakaoMemberClient implements OauthMemberClient {
 
 이에 대한 API는 다음 링크([https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info))에서 확인할 수 있습니다.
 
-<br/>
+<br />
 
 ![kakao_api6](./kakao_api6.png)
 ![kakao_api7](./kakao_api7.png)
@@ -1210,9 +1222,9 @@ public class KakaoMemberClient implements OauthMemberClient {
 
 우선 응답을 매핑할 클래스는 다음과 같습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ KakaoMemberResponse
 
@@ -1289,9 +1301,9 @@ public record KakaoMemberResponse(
 
 OauthMember는 Oauth를 통해 가입한 회원을 나타내는 객체이며, 이를 구현하도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthId
 
@@ -1333,9 +1345,9 @@ public class OauthId {
 
 하나의 서비스 내에서 식별자는 중복되지 않겠지만 서로 다른 서비스간에는 식별자가 중복될수도 있겠다 싶었기 때문에 위와 같이 구현하여 혹시 모를 식별자의 중복을 예방하려 하였습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthMember
 
@@ -1403,9 +1415,9 @@ public class OauthMember {
 
 또한 사용자의 별명과 프로필 사진 URL에 대한 정보를 제공받기로 했으므로, 이를 저장하기 위해 필드를 추가해 주었습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthMemberRepository
 
@@ -1427,9 +1439,9 @@ public interface OauthMemberRepository extends JpaRepository<OauthMember, Long> 
 
 아까 생성해둔 **KakaoApiClient**에 다음 메서드를 추가합니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ KakaoApiClient
 
@@ -1466,9 +1478,9 @@ public interface KakaoApiClient {
 
 이를 위해 우선 OauthMemberClient라는 인터페이스를 정의했습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthMemberClient
 
@@ -1501,9 +1513,9 @@ fetch() 메서드는 인자로 Auth Code를 받습니다.
 
 그리고 AuthCodeRequestUrlProviderComposite과 비슷하게, OauthMemberClientComposite을 구현하였습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthMemberClientComposite
 
@@ -1548,9 +1560,9 @@ public class OauthMemberClientComposite {
 
 이제 OauthMemberClient를 카카오 서비스에 맞게 구현하도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ KakaoMemberClient
 
@@ -1618,17 +1630,17 @@ public class KakaoMemberClient implements OauthMemberClient {
 
 이때 만약 회원가입되어있지 않다면 회원가입도 함께 진행합니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ## 🧐 4\. 받아온 정보를 통해 로그인을 진행한다. 이때 회원가입 되어있지 않다면 회원가입도 함께 진행한다.
 
-<br/>
+<br />
 
 OauthService에 이를 위한 메서드를 추가합니다.
 
-<br/>
+<br />
 
 ### ✨ OauthService
 
@@ -1677,9 +1689,9 @@ public class OauthService {
 
 이제 이를 Controller에서 사용해주면 됩니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### ✨ OauthController
 
@@ -1732,45 +1744,47 @@ public class OauthController {
 
 그 코드는 KakaoRedirectPage.js에 있습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ```js
-import React, {useEffect} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const KakaoRedirectPage = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    const handleOAuthKakao = async (code) => {
-        try {
-            // 카카오로부터 받아온 code를 서버에 전달하여 카카오로 회원가입 & 로그인한다
-            const response = await axios.get(`http://localhost:8080/oauth/login/kakao?code=${code}`);
-            const data = response.data; // 응답 데이터
-            alert("로그인 성공: " + data)
-            navigate("/success");
-        } catch (error) {
-            navigate("/fail");
-        }
-    };
+  const handleOAuthKakao = async (code) => {
+    try {
+      // 카카오로부터 받아온 code를 서버에 전달하여 카카오로 회원가입 & 로그인한다
+      const response = await axios.get(
+        `http://localhost:8080/oauth/login/kakao?code=${code}`
+      );
+      const data = response.data; // 응답 데이터
+      alert("로그인 성공: " + data);
+      navigate("/success");
+    } catch (error) {
+      navigate("/fail");
+    }
+  };
 
-    useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const code = searchParams.get('code');  // 카카오는 Redirect 시키면서 code를 쿼리 스트링으로 준다.
-        if (code) {
-            alert("CODE = " + code)
-            handleOAuthKakao(code);
-        }
-    }, [location]);
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const code = searchParams.get("code"); // 카카오는 Redirect 시키면서 code를 쿼리 스트링으로 준다.
+    if (code) {
+      alert("CODE = " + code);
+      handleOAuthKakao(code);
+    }
+  }, [location]);
 
-    return (
-        <div>
-            <div>Processing...</div>
-        </div>
-    );
+  return (
+    <div>
+      <div>Processing...</div>
+    </div>
+  );
 };
 
 export default KakaoRedirectPage;
@@ -1780,9 +1794,9 @@ export default KakaoRedirectPage;
 
 한번 테스트 해보도록 하겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 http://localhost:3000으로 이동합니다.
 
@@ -1790,15 +1804,15 @@ http://localhost:3000으로 이동합니다.
 
 버튼을 누르고 진행합니다
 
-<br/>
-<br/>.
+<br />
+<br />.
 
 ![sample7](./kakao_sample7.png)
 
 계속 진행합니다.
 
-<br/>
-<br/>
+<br />
+<br />
 
 ![sample8](./kakao_sample8.png)
 
@@ -1806,25 +1820,25 @@ Auth Code를 잘 받아오는 것 까지는 이전에 확인했습니다.
 
 확인을 누르고 서버 로그를 보면 다음과 같습니다.
 
-<br/>
-<br/>
+<br />
+<br />
 
 ![sample9](./kakao_sample9.png)
 
 회원가입이 아주 잘 되는 것을 확인했습니다.
 
-<br/>
-<br/>
+<br />
+<br />
 
 ![sample10](./kakao_sample10.png)
 
 이렇게 해서 카카오톡 로그인 구현이 완료되었습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 새로운 서비스를 등록하는 방법
 
@@ -1832,21 +1846,22 @@ Auth Code를 잘 받아오는 것 까지는 이전에 확인했습니다.
 이제 새로운 서비스를 등록하기 위한 과정을 살펴보겠습니다.<br/>
 네이버를 예시로 들어보겠습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 1. 개발자 애플리케이션 추가
 
 네이버라면 네이버 개발자 사이트([https://developers.naver.com/apps/#/list](https://developers.naver.com/apps/#/list))로 이동하여, 애플리케이션을 생성하고 설정합니다.<br/>
 
-이때 redirect\_uri를 등록할 때에는 **http://localhost:3030/oauth/redirected**/{**서비스 별칭**?(kakao, naver, google 등 임의로 정의)}의 형식으로 등록해줍니다.
+이때 redirect_uri를 등록할 때에는 **http://localhost:3030/oauth/redirected**/{**서비스 별칭**?(kakao, naver, google 등 임의로 정의)}의 형식으로 등록해줍니다.
 
 참고로 http://localhost:3000 같은 경우, 당연히 배포시에는 배포된 서버의 도메인을 입력해주어야 합니다.
 
 같이 해보겠습니다.
 
-<br/><br/>
+<br />
+<br />
 
 네이버 개발자 사이트([https://developers.naver.com/apps/#/list](https://developers.naver.com/apps/#/list))로 이동합니다.
 
@@ -1854,7 +1869,8 @@ Auth Code를 잘 받아오는 것 까지는 이전에 확인했습니다.
 
 Application 등록을 클릭합니다.
 
-<br/><br/>
+<br />
+<br />
 
 ![naver2](./naver_2.png)
 
@@ -1862,15 +1878,16 @@ Application 등록을 클릭합니다.
 
 이때 CallbackUrl은 카카오와 비슷하지만, 마지막이 kakao가 아닌 naver로 변경되었다는 점만 다릅니다.
 
-<br/><br/>
+<br />
+<br />
 
 ![naver3](./naver_3.png)
 
 위 두개를 어딘가에 저장해둡니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 2. OauthServerType에 서비스 추가
 
@@ -1889,9 +1906,9 @@ public enum OauthServerType {
 
 그냥 이름에 맞게 추가해주시면 됩니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 3. application.yml에 애플리케이션 정보 등록
 
@@ -1910,7 +1927,7 @@ oauth:
     scope: ${NAVER_SCOPE}
 ```
 
-1번에서 설정한 client\_id, secret, redirect\_uri, , scope(없으면 공백)를 등록해줍니다.
+1번에서 설정한 client_id, secret, redirect_uri, , scope(없으면 공백)를 등록해줍니다.
 
 해당 설정 정보 클래스는 다음과 같이 구현합니다.
 
@@ -1930,9 +1947,9 @@ public record NaverOauthConfig(
 }
 ```
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 4. AuthCodeRequestUrlProvider 구현
 
@@ -1940,14 +1957,13 @@ public record NaverOauthConfig(
 
 Auth Code와 AccessToken 관련 API 명세는은 [해당 링크](https://developers.naver.com/docs/login/api/api.md#2--api-%EA%B8%B0%EB%B3%B8-%EC%A0%95%EB%B3%B4)에 있습니다.
 
-
 ![naver4](./naver_4.png)
 ![naver5](./naver_5.png)
 ![naver6](./naver_6.png)
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 이에 맞게 구현합니다.
 
@@ -1986,10 +2002,10 @@ public class NaverAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvid
 }
 ```
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ### 🐳 5. AccessToken 발급 & 회원 정보 조회 API Cleint 구현
 
@@ -2001,21 +2017,20 @@ AccessToken 관련도 [해당 링크](https://developers.naver.com/docs/login/ap
 ![naver8](./naver_8.png)
 ![naver9](./naver_9.png)
 
-<br/>
-<br/>
+<br />
+<br />
 
 ### 🚀회원 정보 조회 API 명세
 
 회원 정보 조회는 [해당 링크](https://developers.naver.com/docs/login/profile/profile.md)에 존재합니다.
 
-
 ![naver10](./naver_10.png)
 ![naver11](./naver_11.png)
 ![naver12](./naver_12.png)
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 이에 맞게 구현합니다.
 
@@ -2042,11 +2057,9 @@ public interface NaverApiClient {
 }
 ```
 
-<br/>
-<br/>
-<br/>
-
-
+<br />
+<br />
+<br />
 
 ```java
 package mallang.oauth.infra.oauth.naver.dto;
@@ -2066,11 +2079,9 @@ public record NaverToken(
 }
 ```
 
-<br/>
-<br/>
-<br/>
-
-
+<br />
+<br />
+<br />
 
 ```java
 package mallang.oauth.infra.oauth.naver.dto;
@@ -2116,10 +2127,9 @@ public record NaverMemberResponse(
 
 그리고 HttpInterfaceConfig에 빈으로 등록합니다.
 
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
 
 ```java
 package mallang.oauth.infra.oauth.config;
@@ -2154,9 +2164,9 @@ public class HttpInterfaceConfig {
 }
 ```
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 6. OauthMemberClient 구현
 
@@ -2207,50 +2217,52 @@ public class NaverMemberClient implements OauthMemberClient {
 
 이러면 네이버 로그인도 구현이 끝납니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 네이버 로그인 테스트
 
 확인하고 싶으면 프론트엔드에 다음 코드를 추가합니다.
 
 ```js
-import React, {useEffect} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const NaverRedirectPage = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    const handleOAuthKakao = async (code) => {
-        try {
-            // 네이버로부터 받아온 code를 서버에 전달하여 카카오로 회원가입 & 로그인한다
-            const response = await axios.get(`http://localhost:8080/oauth/login/naver?code=${code}`);
-            const data = response.data; // 응답 데이터
-            alert("로그인 성공: " + data)
-            navigate("/success");
-        } catch (error) {
-            navigate("/fail");
-        }
-    };
+  const handleOAuthKakao = async (code) => {
+    try {
+      // 네이버로부터 받아온 code를 서버에 전달하여 카카오로 회원가입 & 로그인한다
+      const response = await axios.get(
+        `http://localhost:8080/oauth/login/naver?code=${code}`
+      );
+      const data = response.data; // 응답 데이터
+      alert("로그인 성공: " + data);
+      navigate("/success");
+    } catch (error) {
+      navigate("/fail");
+    }
+  };
 
-    useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const code = searchParams.get('code');  // 네이버는 Redirect 시키면서 code를 쿼리 스트링으로 준다.
-        if (code) {
-            alert("CODE = " + code)
-            handleOAuthKakao(code);
-        }
-    }, [location]);
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const code = searchParams.get("code"); // 네이버는 Redirect 시키면서 code를 쿼리 스트링으로 준다.
+    if (code) {
+      alert("CODE = " + code);
+      handleOAuthKakao(code);
+    }
+  }, [location]);
 
-    return (
-        <div>
-            <div>Processing...</div>
-        </div>
-    );
+  return (
+    <div>
+      <div>Processing...</div>
+    </div>
+  );
 };
 
 export default NaverRedirectPage;
@@ -2262,30 +2274,34 @@ kakao와 비교해서 axios.get의 url의 마지막 부분이 kakao 에서 naver
 
 그리고 라우팅을 추가합니다.
 
-<br/>
-<br/>
-<br/>
-
-
+<br />
+<br />
+<br />
 
 ```js
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./LoginPage";
 import KakaoRedirectPage from "./KakaoRedirectPage";
 import NaverRedirectPage from "./NaverRedirectPage";
 
 const App = () => {
-    return (
-        <div className='App'>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<LoginPage />}></Route>
-                    <Route path="/oauth/redirected/kakao" element={<KakaoRedirectPage />}></Route>
-                    <Route path="/oauth/redirected/naver" element={<NaverRedirectPage />}></Route>
-                </Routes>
-            </BrowserRouter>
-        </div>
-    );
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginPage />}></Route>
+          <Route
+            path="/oauth/redirected/kakao"
+            element={<KakaoRedirectPage />}
+          ></Route>
+          <Route
+            path="/oauth/redirected/naver"
+            element={<NaverRedirectPage />}
+          ></Route>
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 };
 
 export default App;
@@ -2293,77 +2309,91 @@ export default App;
 
 메인 로그인 페이지도 버튼을 추가합니다.
 
-<br/>
-<br/>
-<br/>
-
-
+<br />
+<br />
+<br />
 
 ```js
-import React from 'react';
+import React from "react";
 
 const LoginPage = () => {
-    const handleKakaoLoginClick = () => {
-        window.location.href = 'http://localhost:8080/oauth/kakao';
-    };
+  const handleKakaoLoginClick = () => {
+    window.location.href = "http://localhost:8080/oauth/kakao";
+  };
 
-    const handleNaverLoginClick = () => {
-        window.location.href = 'http://localhost:8080/oauth/naver'; // Replace with your Naver login URL
-    };
+  const handleNaverLoginClick = () => {
+    window.location.href = "http://localhost:8080/oauth/naver"; // Replace with your Naver login URL
+  };
 
-    return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <div>
-                <button
-                    onClick={handleKakaoLoginClick}
-                    style={{ padding: '10px 20px', fontSize: '18px', borderRadius: '5px', cursor: 'pointer', marginRight: '10px' }}
-                >
-                    카카오톡 로그인
-                </button>
-                <button
-                    onClick={handleNaverLoginClick}
-                    style={{ padding: '10px 20px', fontSize: '18px', borderRadius: '5px', cursor: 'pointer' }}
-                >
-                    네이버 로그인
-                </button>
-            </div>
-        </div>
-    );
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <div>
+        <button
+          onClick={handleKakaoLoginClick}
+          style={{
+            padding: "10px 20px",
+            fontSize: "18px",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginRight: "10px",
+          }}
+        >
+          카카오톡 로그인
+        </button>
+        <button
+          onClick={handleNaverLoginClick}
+          style={{
+            padding: "10px 20px",
+            fontSize: "18px",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          네이버 로그인
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;
 ```
 
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
 
 진행해 보겠습니다.
 
 ![naver sample1](./naver_sample1.png)
 
-<br/>
+<br />
 
 ![naver sample2](./naver_sample2.png)
 
-<br/>
+<br />
 
 ![naver sample3](./naver_sample3.png)
 
-<br/>
+<br />
 
 ![naver sample4](./naver_sample4.png)
 
-<br/>
+<br />
 
 ![naver sample5](./naver_sample5.png)
 
-<br/>
+<br />
 
 ![naver sample6](./naver_sample6.png)
 
-<br/>
-
+<br />
 
 이렇게 해서 정말 간단하게 Naver 로그인도 추가된 것을 확인할 수 있습니다!
