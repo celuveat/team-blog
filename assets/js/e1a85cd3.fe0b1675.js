@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkceluveat_team_blog=self.webpackChunkceluveat_team_blog||[]).push([[1988],{5580:e=>{e.exports=JSON.parse('{"label":"git submodules","permalink":"/team-blog/back-blog/tags/git-submodules","allTagsPath":"/team-blog/back-blog/tags","count":1}')}}]);
