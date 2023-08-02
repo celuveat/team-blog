@@ -10,6 +10,9 @@ tags:
   - Github Actions
 ---
 
+셀럽잇 CI/CD 발전기 - (1)
+
+<!--truncate-->
 
 ## 🧐 서론
 
@@ -19,58 +22,61 @@ tags:
 
 셀럽잇 팀은 주어진 제약 내에서 배포 자동화를 달성하기 위해 많은 고민을 하였고, 일차적으로 다음과 같은 CI/CD 아키텍처를 도입하였습니다.
 
-<br/>
+<br />
 
 ![CICD](./cicd.png)
 
-<br/>
-
+<br />
 
 이러한 과정에서 생겨난 고민들과 발생했던 문제들을 살펴보며 전체적인 구축 과정을 소개해 드리려 합니다.
 
-
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 제약조건과 요구사항
 
 ### 🖥️ 컴퓨팅 파워
+
 - 서버 개수: 최대 3대
 - 서버 사양: 최대 t4g.small
 - 스토리지: 최대 20GiB
 
-<br/>
+<br />
 
 ### 📃 요구사항
+
 - 개발 서버와 프로덕션 서버의 분리
 
-
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 셀럽잇 팀의 git 브랜치 전략
+
 CI/CD 아키텍처에 대한 소개 전에, 원할한 설명을 위하여 저희 팀의 git 브랜치 전략에 대해 우선 소개하도록 하겠습니다.
 
 셀럽잇 팀은 gitflow 전략을 조금 수정하여 다음과 같이 5개의 브랜치를 사용합니다.
+
 - `main` - 프로덕션용 브랜치
 - `develop-backend` - 백엔드의 다음 출시 버전을 개발하는 브랜치
 - `develop-frontend`- 프론트엔드의 다음 출시 버전을 개발하는 브랜치
 - `feature` - 기능 개발 브랜치
 - `hotfix` - main 브랜치에서 발생한 버그를 수정할 때 사용하는 브랜치
 
-<br/>
+<br />
 
 ### 🐳 main 브랜치
+
 `main` 브랜치에 존재하는 코드는 실제 서비스될 코드이기 때문에 항상 배포 가능한 상태여야 하며 기능이 완전히 구현된 상태여야 합니다.<br/>
 `main` 브랜치는 `develop-backend` 브랜치와 `develop-frontend` 브랜치에서 기능들이 완성한 이후 `merge`됩니다.
 
-<br/>
+<br />
 
 ### 🐳 develop-[backend/frontend] 브랜치
+
 git flow의 `develop` 브랜치를 저희의 상황에 맞게 재구성한 브랜치로,
 백엔드와 프론트엔드가 각각 서로의 영향을 받지 않고 개발을 이어갈 수 있도록 하기 위하여 위와 같이 구성하였습니다.
 
@@ -80,28 +86,28 @@ git flow의 `develop` 브랜치를 저희의 상황에 맞게 재구성한 브�
 `develop-backend` 브랜치에서는 `backend` 폴더에서만 작업이 이루어지며,
 `develop-frontend` 브랜치에서는 `frontend` 폴더에서만 작업이 이루어집니다.
 
-
-
-<br/>
+<br />
 
 ### 🐳 feature 브랜치
+
 `feature` 브랜치는 기능을 개발하는 브랜치로, 기본적으로 `이슈`와 1대1 매핑 됩니다.<br/>
 개발해야 하는 기능들에 대하여 먼저 이슈를 생성하면, 각 이슈별 담당자가 이슈에 대응되는 `feature` 브랜치를 생성합니다.<br/>
 기능을 개발되면 `feature` 브랜치에서 `develop` 브랜치에 `PR`을 날립니다.
 
-<br/>
+<br />
 
 ### 🐳 hotfix 브랜치
+
 `hotfix` 브랜치는 `main` 브랜치에서 발생한 버그를 급하게 수정해야 하는 경우 사용하는 브랜치입니다.<br/>
 이때 `hotfix` 브랜치의 변경 사항은 `main` 브랜치와 `develop` 브랜치에 모두 반영됩니다.
 
-
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 CI 기술 선택과 구축
+
 저희 팀은 CI를 위해 `Github Actions`를 사용하기로 결정했습니다.
 
 `Github Actions`가 `Jenkins`에 비해 학습 & 적용하기 쉽다고 판단했으며, `Github Actions` 만으로도 원하는 기능을 모두 사용할 수 있었기에 굳이 `Jenkins`를 사용할 이유가 없었습니다.
@@ -110,9 +116,10 @@ git flow의 `develop` 브랜치를 저희의 상황에 맞게 재구성한 브�
 
 그래서 저희는 백엔드와 프론트엔드 모두 CI 기술로써 `Github Actions`를 도입했으며, 다음과 같이 설정을 진행했습니다.
 
-<br/>
+<br />
 
 ### 🐳 백엔드 CI workflow
+
 ```yml
 name: ✨ Celuveat Backend CI ✨
 
@@ -122,14 +129,14 @@ on:
       - develop-backend
       - main
     paths:
-      - 'backend/**'
+      - "backend/**"
 
   pull_request:
     branches:
       - develop-backend
       - main
     paths:
-      - 'backend/**'
+      - "backend/**"
 
 permissions:
   checks: write
@@ -142,42 +149,42 @@ jobs:
       working-directory: ./backend
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: ✨ JDK 17 설정
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: ✨ JDK 17 설정
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
 
-    - name: ✨ Gradlew 권한 설정
-      run: chmod +x ./gradlew
-      working-directory: ${{ env.working-directory }}
+      - name: ✨ Gradlew 권한 설정
+        run: chmod +x ./gradlew
+        working-directory: ${{ env.working-directory }}
 
-    - name: ✨ 테스트 진행
-      run: ./gradlew test
-      working-directory: ${{ env.working-directory }}
+      - name: ✨ 테스트 진행
+        run: ./gradlew test
+        working-directory: ${{ env.working-directory }}
 
-    - name: ✨ 테스트 결과 Report
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: always()
-      with:
-         files: '**/build/test-results/**/*.xml'
+      - name: ✨ 테스트 결과 Report
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: "**/build/test-results/**/*.xml"
 
-    - name: ✨ 테스트 실패 Comment
-      uses: mikepenz/action-junit-report@v3
-      if: always()
-      with:
-        report_paths: '**/build/test-results/test/TEST-*.xml'
+      - name: ✨ 테스트 실패 Comment
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: "**/build/test-results/test/TEST-*.xml"
 ```
-
 
 이러한 설정에 대한 자세한 내용은 [말랑이의 블로그](https://ttl-blog.tistory.com/1350)를 참고해주세요.
 
-<br/>
-<br/>
+<br />
+<br />
 
 ### 🐳 프론트엔드 CI workflow
+
 ```yml
 name: 🍔 Celuveat Frontend CI 🍔
 
@@ -187,14 +194,14 @@ on:
       - develop-frontend
       - main
     paths:
-      - 'frontend/**'
+      - "frontend/**"
 
   pull_request:
     branches:
       - develop-frontend
       - main
     paths:
-      - 'frontend/**'
+      - "frontend/**"
 
 jobs:
   frontend-test:
@@ -209,7 +216,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '18.16.1'
+          node-version: "18.16.1"
 
       - name: 🍔 yarn install
         run: yarn install
@@ -226,27 +233,26 @@ jobs:
 
 위와 같이 백엔드와 프론트엔드의 CI workflow를 작성하여 develop-backend & develop-frontend 브랜치에 PR이 발샐할 때마다 테스트를 수행하도록 설정했습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-
+<br />
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 CD 기술 선택과 구축
+
 처음에는 CD를 위한 기술로써 `Jenkins`를 사용하려 했습니다.
 저를 포함한 몇몇 팀원들이 이미 경험해 본 기술이었기 때문에, 적용하는데 큰 어려움이 없을 것이라 판단했었습니다.
 
 그런데 위에서 언급한 `제약조건`을 고려한 결과, 최종적으로 `Jenkins` 대신 `Github Actions`의 `self-hosted runners`를 사용하기로 결정하였습니다.
 
-<br/>
-<br/>
-
+<br />
+<br />
 
 ### 🐳 Jenkins 대신 Github Actions를 사용한 이유
 
 제약조건 속에는 다음과 같은 항목이 존재했습니다.
+
 - 서버 개수: 최대 3대
 - 서버 사양: 최대 t4g.small
 
@@ -261,45 +267,46 @@ jobs:
 이러한 상황이었기에 CD를 위해서 추가로 서버를 사용할 수 없었고, 결국 기존 서버에 추가하는 식으로 구성하여야 했습니다.
 
 이때 각 서버의 사양인 `t4g.small`의 스펙은 다음과 같습니다
+
 - vCPU: 2
 - RAM: 2 GiB
-
 
 RAM이 2GB밖에 안되기 때문에 메모리를 최대한 적게 사용하는 도구를 사용하여야 했으며, 이를 위해 `Jenkins`와 `Github Actions`의 `self-hosted runners`를 비교했습니다.
 
 비교 결과는 `Github Actions`의 `self-hosted runners`가 `Jenkins`보다 메모리 사용량이 훨씬 낮았고, 따라서 `Github Actions`를 통해 CD를 구축하기로 결정했습니다.
 
-<br/>
-<br/>
+<br />
+<br />
 
 ### 🐳 참고 - 메모리 사용량 비교
+
 비교 시 공통 사항은 다음과 같습니다.
+
 - Swap 메모리 1.5 GB 할당
 - java 17 버전 설치
 
-<br/>
+<br />
 
 #### 🚀 기본적인 서버의 메모리 사용량
 
 자바만을 깔아둔 서버의 메모리 사용량은 다음과 같습니다.
 ![basic-java](./자바설치기본상태.png)
 
-<br/>
-<br/>
+<br />
+<br />
 
 #### 🚀 Github Actions self-hosted runner
 
 단순 Runner 설치 후 실행 상태입니다.
 ![actions-basic](./깃헙액션기본.png)
 
-<br/>
+<br />
 
 웹훅으로 runner가 동작하여 bootJar을 실행할 때의 최대 메모리 사용량입니다.
 ![actions-max](./깃헙액션최대.png)
 
-<br/>
-<br/>
-
+<br />
+<br />
 
 #### 🚀 Jenkins
 
@@ -309,22 +316,21 @@ Jenkins 설치 후 단순 실행 상태입니다.
 웹훅으로 젠킨스가 동작하여 bootJar을 실행할 때의 최대 메모리 사용량입니다.
 ![jenkins-max](./jenkins최대.png)
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 이렇듯 간단한 비교를 통해서도 `Jenkins`가 `Github Actions` 의 `self-hosted runners`보다 많은 메모리를 필요로 하는 것을 알 수 있었습니다.
 
 최종적으로 저희 팀은 메모리 사용량도 적고, 적용하기도 쉬운(?) `Github Actions self-hosted runners`를 사용하기로 했습니다.
 
-
-<br/>
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
+<br />
 
 ### 🐳 백엔드 DEV용 CD workflow
+
 ```yml
 name: ✨ Celuveat backend DEV CD ✨
 
@@ -333,7 +339,7 @@ on:
     branches:
       - develop-backend
     paths:
-      - 'backend/**'
+      - "backend/**"
 
 jobs:
   deploy-backend:
@@ -346,11 +352,12 @@ jobs:
           sudo sh deploy-backend.sh
 ```
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 백엔드 DEV용 배포 스크립트
+
 ```bash
 #!/bin/sh
 
@@ -411,11 +418,12 @@ nohup java -jar $PROJECT_PATH/$PROJECT_NAME/$BUILD_PATH/$JAR_NAME > /home/ubuntu
 
 조금 더 고도화가 필요하지만, 우선은 간단하게만 작성했습니다.
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 프론트엔드 DEV용 CD workflow
+
 ```yml
 name: 🍔 Celuveat frontend DEV CD 🍔
 
@@ -424,7 +432,7 @@ on:
     branches:
       - develop-frontend
     paths:
-      - 'frontend/**'
+      - "frontend/**"
 
 jobs:
   deploy-frontend:
@@ -442,14 +450,12 @@ jobs:
           sudo sh deploy-frontend.sh
 ```
 
-
-
-
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ### 🐳 프론트엔드 DEV용 배포 스크립트
+
 ```bash
 #!/bin/sh
 
@@ -503,9 +509,9 @@ FRONTEND_LOG_FILE="frontend-log-$current_date.log"
 nohup yarn start -- --port $PORT > /home/ubuntu/log/frontend/$FRONTEND_LOG_FILE 2>&1 &
 ```
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 
 ## 😎 마무리
 
@@ -517,7 +523,6 @@ nohup yarn start -- --port $PORT > /home/ubuntu/log/frontend/$FRONTEND_LOG_FILE 
 
 읽어주셔서 감사합니다 😊
 
-
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />

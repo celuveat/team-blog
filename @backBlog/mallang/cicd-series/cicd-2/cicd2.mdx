@@ -11,16 +11,19 @@ tags:
   - git submodules
 ---
 
-<br/>
-<br/>
-<br/>
+셀럽잇 CI/CD 발전기 - (2)
+
+<!--truncate-->
+
+<br />
+<br />
+<br />
 
 ## 🧐 서론
 
 안녕하세요. 셀럽잇의 백엔드 말랑입니다.
 
 3차 데모데이를 앞두고 프로덕션 서버를 준비하다 보니, 셀럽잇 팀의 CI/CD 방식에 변경 사항이 생겨서 이를 공유하기 위해 찾아왔습니다 😎
-
 
 첫번째 변경점은 **Git Submodule**을 도입했다는 것입니다. <br/>
 
@@ -33,27 +36,25 @@ tags:
 
 대신 서브 모듈을 도입하면서 발생했던 이슈들을 해결하는 과정을 서술하겠습니다.
 
-<br/>
-<br/>
+<br />
+<br />
 
 두번째 변경점은 **프로덕션 서버를 위한 배포 스크립트가 작성**된 것입니다. <br/>
 
 이전 글에서 작성하지 않은 **Prod 서버를 위한 CD workflow** 설정을 중심적으로 살펴보고,<br/>
 하나의 Git Repository에서 `dev`와 `prod` 서버를 구분하여 배포하도록 설정하는 방법에 대해 살펴보겠습니다.
 
-
-
-
-
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 Submodule 적용 트러블슈팅
+
 저희 팀은 CD를 `Github Actions Self-hosted Runners`를 통해 수행하는데요,
 이때 Workflow를 다시 살펴보겠습니다.
+
 ```yml
 name: ✨ Celuveat backend DEV CD ✨
 
@@ -62,7 +63,7 @@ on:
     branches:
       - develop-backend
     paths:
-      - 'backend/**'
+      - "backend/**"
 
 jobs:
   deploy-backend:
@@ -81,18 +82,17 @@ jobs:
 [EC2에서 Private Repository에 대한 인증 문제 해결하기](https://ttl-blog.tistory.com/1346#%F0%9F%A7%90%20EC2%EC%97%90%EC%84%9C%20Private%20Repository%EC%97%90%20%EB%8C%80%ED%95%9C%20%EC%9D%B8%EC%A6%9D%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-1)
 부분을 보고 똑같이 적용하였는데, git submodule update를 하는 과정에서 `Permission denied (publickey)` 오류가 발생하였습니다.
 
-
 이에 대한 원인을 찾아보니, git 에서 sudo 명령을 되도록 사용해서는 않는것을 권장한다고 하며,
 `sudo 없이 ssh 키를 생성`한 다음 `sudo git push`와 같은 명령을 사용하면 `생성한 것과 동일한 키가 사용되지 않는다`고
 [다음 문서](https://docs.github.com/ko/authentication/troubleshooting-ssh/error-permission-denied-publickey)에 나와있었습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
+<br />
 
 ### 🐳 왜 문제인가?
+
 `sudo` 명령을 통해 쉘 스크립트를 실행하게 되면, `쉘 스크립트에서 사용되는 모든 명령어`가 `sudo 권한`으로 실행되게 됩니다.
 
 그런데 이때 배포 스크립트에는 다음 명령어가 존재했습니다.
@@ -107,19 +107,19 @@ git submodule update
 
 즉 위 명령이 실제로는 `sudo git submodule update`로 실행되는 것이었습니다.
 
-
 EC2에서 Private repository에 대한 인증 처리를 위해 서브모듈의 URL을 **ssh**로 설정하였기에
 `git submodule update`를 위해서는 `ssh key`가 필요한 상황이었습니다.
 
 그러나 위 문서의 설명에 나와있듯이 `sudo 없이 ssh 키를 생성`한 다음 `sudo git update submodule` 명령어를 사용하였기에,
 `생성한 것과 동일한 키가 사용되지 않아` 문제가 발생했던 것이었습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
 
 ### 🐳 어떻게 해결하나요?
+
 간단합니다.
 sudo 없이 ssh 키를 생성한 것이 문제였기 때문에, `sudo 명령어와 함께 ssh 키를 생성`해주면 됩니다.
 
@@ -128,21 +128,19 @@ sudo 없이 ssh 키를 생성한 것이 문제였기 때문에, `sudo 명령어�
 `sudo su` 명령을 통해 root 계정으로 전환 후 `cat ~/.ssh/id_rsa.pub`를 실행해 주어야 합니다.
 (해당 과정도 블로그 글에 업데이트 해두었으니, 상세한 설명은 블로그를 참조해주시면 감사하겠습니다.)
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 
 ## 🧐 개발 서버(Dev)와 프로덕션 서버(Prod)의 배포 자동화하기
+
 프로덕션 서버를 포함한 저희의 CI/CD 구조는 다음과 같습니다.
 ![cicd](./cicd.png)
-
 
 구조를 보면 알 수 있듯이, `develop-frontend` 브랜치와 `develop-backend` 브랜치에 PR이 Merge되면,<br/>
 `dev 서버`의 frontend와 backend의 배포 스크립트를 각각 실행시키는 방법을 사용하고 있습니다.
@@ -154,12 +152,10 @@ sudo 없이 ssh 키를 생성한 것이 문제였기 때문에, `sudo 명령어�
 이 상황에서 어떻게 `workflow`에 따라 특정 서버의 `self-hosted runners`만 실행할 수 있을까요? <br/>
 (더 정확히는 어떻게 **PR이 Merge되는 브랜치에 따라** 특정 `self-hosted runners`만 실행되도록 설정할 수 있을까요?)
 
-
-<br/>
-<br/>
-<br/>
-<br/>
-
+<br />
+<br />
+<br />
+<br />
 
 ### 🐳 Runners 의 Label 활용하기
 
@@ -173,9 +169,10 @@ sudo 없이 ssh 키를 생성한 것이 문제였기 때문에, `sudo 명령어�
 
 그리고 백엔드의 DEV 서버용 CD workflow를 다음과 같이 수정하였습니다.
 
-<br/>
+<br />
 
 #### 🚀 백엔드 DEV용 CD workflow
+
 ```yml
 name: ✨ Celuveat backend DEV CD ✨
 
@@ -184,11 +181,11 @@ on:
     branches:
       - develop-backend
     paths:
-      - 'backend/**'
+      - "backend/**"
 
 jobs:
   deploy-backend:
-    runs-on: [self-hosted, dev]  ## 추가
+    runs-on: [self-hosted, dev] ## 추가
 
     steps:
       - name: ✨ Run Backend Deploy Script
@@ -197,15 +194,15 @@ jobs:
           sudo sh deploy-backend.sh
 ```
 
-
-<br/>
-<br/>
+<br />
+<br />
 
 이후 백엔드의 PROD 서버용 CD workflow를 다음과 같이 작성하였습니다.
 
-<br/>
+<br />
 
 #### 🚀 백엔드 PROD용 CD workflow
+
 ```yml
 name: ✨ Celuveat backend PROD CD ✨
 
@@ -214,7 +211,7 @@ on:
     branches:
       - main
     paths:
-      - 'backend/**'
+      - "backend/**"
 
 jobs:
   deploy-backend:
@@ -227,13 +224,12 @@ jobs:
           sudo sh deploy-backend.sh
 ```
 
-
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 
 ## 😎 마무리
 
@@ -243,8 +239,6 @@ jobs:
 
 읽어주셔서 감사합니다 😊
 
-
-
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
