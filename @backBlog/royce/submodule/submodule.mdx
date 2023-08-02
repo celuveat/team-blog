@@ -1,0 +1,255 @@
+---
+date: 2023-08-02
+authors: TaeyeonRoyce
+title: "Submodule 도입하기"
+description: "Submodule을 통해 ssh 접속 없이 secret 값 관리하기"
+keywords: ["Secret-Key", "인프라", "서브모듈"]
+tags:
+  - 서브모듈
+  - 인프라
+  - Github
+---
+
+
+# Submodule을 통해 ssh 접속 없이 secret 값 관리하기
+
+안녕하세요, 셀럽잇의 로이스입니다.
+
+이번 글에서는 `Submodule`을 통해 Secret 정보들을 노출시키지 않으면서 지속적인 배포를 유지하는 과정에 대해 소개하겠습니다.
+
+> 노출되면 안되지만, 빌드나 배포시 필요한 값들을 `[Secret 정보]` 라는 단어를 사용하겠습니다. 
+
+<br>
+
+## 기존 방식
+
+셀럽잇 프로젝트에서는 다양한 Secret 값들이 존재합니다.
+
+아래 dev환경에서의 profile파일을 먼저 보시죠.
+
+`application-dev.yml`
+
+```yml
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+
+    hibernate:
+      ddl-auto: validate
+
+cors:
+  allowedOrigins: ${CORS_ALLOW_ORIGINS}
+```
+
+저희는 `Secret 정보`들에 환경변수명을 설정해 두었고, 배포되는 프로세스에서 아래와 같이 환경변수 선언을 통해 관리하였습니다.
+
+```sh
+export DB_URL=jdbc:test12312
+export DB_USERNAME=sa
+export DB_PASSWORD=
+export DB_DRIVER_CLASS_NAME=driver
+...
+```
+
+이러한 방식을 통해 배포되는 환경/서버에 따라 원하는 값들을 할당 할 수 있었습니다.
+
+
+
+## 문제점
+
+위 방식을 사용하다 개선의 필요성을 느낀 상황은 다음과 같습니다.
+
+<br>
+
+### 값을 수정할 때 마다 `ssh`프로토콜을 통해 해당 서버에 접속하여 변경해야 한다.
+
+우아한테크코스에서 제공하는 ec2 instance에 설정된 보안 정책에 따라 캠퍼스 내에서만 `ssh` 연결이 가능한 상황입니다.
+
+물리적 공간이 한정되어 있기 때문에, 잘못된 환경변수 설정로 인해 발생한 오류나 버그를 수정하려면 즉각적인 대응에 어려움이 있습니다.
+
+
+
+### local에서 실행하는 경우, 명시된 환경변수들을 모두 선언해야 한다.
+
+백엔드 크루들이 개개인의 환경에서 해당 값으로 테스트를 하거나 실행하려면 모든 `Secret` 값들을 개개인의 환경에서 주입하거나 선언해야 했습니다.
+
+만약, 새로운 `Secret` 값이 존재하는 PR이 추가된다면, 모든 크루들에게 해당 값이 공유된 상태에서만 추가된 코드를 실행하거나 테스트할 수 있습니다. 여러 값들이 존재한다면, 크루들간의 `Secret`값 공유 및 동기화 과정에서 값이 누락되거나 주입을 하지 않는 등의 실수를 매번 감내해야 합니다.
+
+
+
+그래서 저희는 `git submodule`을 통해 `Secret` 값들을 관리 및 공유하기로 하였습니다.
+
+
+
+## Submodule 생성
+
+Submodule은 git의 레포지토리 하위에 다른 저장소를 관리하기 위한 도구입니다. 
+
+상위 개념의 Repository와 하위 개념의 submodule이 존재합니다.
+
+[상위 Repository]에 submodule을 등록하면, 상위 Repository에서 submoulde를 하위 디렉토리로 사용할 수 있습니다.
+
+저희는 [2023-celuveat repository](https://github.com/woowacourse-teams/2023-celuveat)에 secret 값들이 저장되어있는 다른 repository를 submodule로 등록하였습니다.
+
+
+
+먼저, 서브 모듈로 등록할 `private repository`를 생성하고 사용할 값들을 추가합니다.
+이때, 실제 사용되는 값을 추가합니다.
+
+`application-dev.yml`
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://ip:3306/db
+    username: dbusername
+    password: dbpassword
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+
+    hibernate:
+      ddl-auto: validate
+
+cors:
+  allowedOrigins: "localhost:3000"
+```
+
+---
+
+그 후, 2023-celuveat repository(상위 Repository)에 서브모듈을 추가합니다. 간단하게 submodule을 등록하였습니다.
+
+```sh
+git submodule add https://github.com/celuveat/backend-submodule.git
+```
+
+submodule을 등록하고 나면, `.gitmodules`라는 파일이 생성됩니다.
+
+`.gitmodules`
+
+```shell
+[submodule "backend/backend-submodule"]
+		path = backend/backend-submodule
+		url = git@github.com:celuveat/backend-submodule.git
+```
+
+url에 지정된 `Repository`의 값들이 `backend/backend-submodule`에 추가되었다는 의미입니다.
+
+*이때, url에 `HTTPS`가 아닌 `SSH` path를 등록하여 추후 인증키를 통해 private repository의 값을 불러올 수 있도록 합니다.*
+
+`상위 Repository`를 확인해보면 추가된것을 확인할 수 있습니다.
+
+![Screenshot 2023-08-02 at 14.35.06](/Users/wontaeyeon/Library/Application Support/typora-user-images/Screenshot 2023-08-02 at 14.35.06.png)
+
+이렇게 상위 Repository에 서브 모듈의 값들을 디렉토리처럼 추가할 수 있습니다.
+
+
+
+## Submodule 값 사용하기
+
+단순히 `git pull`을 한다면 서브모듈의 값들을 찾아올 수 없습니다.
+
+![Screenshot 2023-08-02 at 14.51.44](/Users/wontaeyeon/Library/Application Support/typora-user-images/Screenshot 2023-08-02 at 14.51.44.png)
+
+서브모듈의 커밋을 불러와야 하는데요. 아래 커맨드로 submodule의 값을 업데이트 해주면 됩니다.
+
+```shell
+# 최초 실행 시
+git submoudle init
+```
+
+```sh
+git submodule update --remote
+```
+
+실행하면 `git@github.com: Permission denied (publickey).`와 함께 오류를 마주하게 됩니다.
+
+앞선 과정에서 SSH path로 서브모듈 Repository를 등록하였기 때문에, 등록한 key가 없어 권한 문제를 마주한 것 입니다.
+
+우선 인증에 사용될 Key를 생성합니다.
+
+```shell
+ssh-keygen -t rsa
+```
+
+모두 enter를 누르며 작업을 기다리면 `rsa.pub`이 생성된 경로가 출력되며 완료됩니다.
+
+![Screenshot 2023-08-02 at 15.21.20](/Users/wontaeyeon/Desktop/Screenshot 2023-08-02 at 15.21.20.png)
+
+생성된 public key를 확인할 수 있습니다.
+
+```shell
+cat ~/.ssh/id_rsa.pub
+```
+
+
+
+생성된 Key를 **모두** 복사한 뒤
+`github계정 프로필` -> `Settings` -> `SSH and GPG key` 에 추가합니다.
+이때 github 계정은 private repository인 서브 모듈에 대한 권한이 존재해야 합니다.
+
+등록이 완료되었다면, 다시 돌아와서 서브모듈의 값을 불러옵니다.
+
+```shell
+git submodule update --remote
+```
+
+![Screenshot 2023-08-02 at 15.34.46](/Users/wontaeyeon/Library/Application Support/typora-user-images/Screenshot 2023-08-02 at 15.34.46.png)
+
+잘 불러와진 것을 확인할 수 있습니다.
+
+
+
+하지만, 해당 디렉토리에 존재한다면 Spring application이 동작할 때 사용할 수 없습니다.
+
+그래서 위와 같은 구조에서 빌드가 발생할 때, submodule을 통해 받아온 `application.yml`값 들을 감지 가능한 위치인 `src.main.resources`  하위로 옮기는 작업을 하였습니다.
+
+`build.gradle`에 아래 코드를 추가하였습니다.
+
+```groovy
+processResources.dependsOn('copySecret')
+
+tasks.register('copySecret', Copy) {
+    from './backend-submodule' // 서브모듈 디렉토리 경로
+    include "application*.yml"  // 복사할 파일들
+    into './src/main/resources'  // 복사 위치
+}
+
+```
+
+
+
+해당 코드를 추가한 뒤 빌드 작업을 수행하면, 지정해둔 경로에 성공적으로 복사됩니다.
+
+![Screenshot 2023-08-02 at 15.38.26](/Users/wontaeyeon/Library/Application Support/typora-user-images/Screenshot 2023-08-02 at 15.38.26.png)
+
+> src.main.resources 경로를 .gitignore에 미리 등록해 두었습니다.
+
+
+
+## 정리
+
+`submodule`을 도입하여 Secret 값들을 노출시키지 않으면서도 쉽게 공유할 수 있었습니다.
+해당 값들의 형상관리 역시 가능해졌고, 접근 권한만 있다면 어디서든 해당 값들을 수정하여 배포시 사용되는 값들도 조정할 수 있게되었습니다.
+
+`git pull` 과  `git submodule update --remote` 두 명령어를 통해 어느 환경에서도 Secret 값들을 포함하여 application을 실행 할 수 있습니다.
+
+
+
