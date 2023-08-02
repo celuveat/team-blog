@@ -155,8 +155,7 @@ url에 지정된 `Repository`의 값들이 `backend/backend-submodule`에 추가
 *이때, url에 `HTTPS`가 아닌 `SSH` path를 등록하여 추후 인증키를 통해 private repository의 값을 불러올 수 있도록 합니다.*
 
 `상위 Repository`를 확인해보면 추가된것을 확인할 수 있습니다.
-
-![Screenshot 2023-08-02 at 14.35.06](/Users/wontaeyeon/Library/Application Support/typora-user-images/Screenshot 2023-08-02 at 14.35.06.png)
+![submodule_init](./submodule_init.png)
 
 이렇게 상위 Repository에 서브 모듈의 값들을 디렉토리처럼 추가할 수 있습니다.
 
@@ -166,7 +165,7 @@ url에 지정된 `Repository`의 값들이 `backend/backend-submodule`에 추가
 
 단순히 `git pull`을 한다면 서브모듈의 값들을 찾아올 수 없습니다.
 
-![Screenshot 2023-08-02 at 14.51.44](/Users/wontaeyeon/Library/Application Support/typora-user-images/Screenshot 2023-08-02 at 14.51.44.png)
+![idea_submodule_init](./idea_submodule_init.png)
 
 서브모듈의 커밋을 불러와야 하는데요. 아래 커맨드로 submodule의 값을 업데이트 해주면 됩니다.
 
@@ -191,7 +190,7 @@ ssh-keygen -t rsa
 
 모두 enter를 누르며 작업을 기다리면 `rsa.pub`이 생성된 경로가 출력되며 완료됩니다.
 
-![Screenshot 2023-08-02 at 15.21.20](/Users/wontaeyeon/Desktop/Screenshot 2023-08-02 at 15.21.20.png)
+![key-gen](./key-gen.png)
 
 생성된 public key를 확인할 수 있습니다.
 
@@ -211,7 +210,7 @@ cat ~/.ssh/id_rsa.pub
 git submodule update --remote
 ```
 
-![Screenshot 2023-08-02 at 15.34.46](/Users/wontaeyeon/Library/Application Support/typora-user-images/Screenshot 2023-08-02 at 15.34.46.png)
+![idea_submodule](./idea_submodule.png)
 
 잘 불러와진 것을 확인할 수 있습니다.
 
@@ -238,7 +237,7 @@ tasks.register('copySecret', Copy) {
 
 해당 코드를 추가한 뒤 빌드 작업을 수행하면, 지정해둔 경로에 성공적으로 복사됩니다.
 
-![Screenshot 2023-08-02 at 15.38.26](/Users/wontaeyeon/Library/Application Support/typora-user-images/Screenshot 2023-08-02 at 15.38.26.png)
+![idea_after_build](./idea_after_build.png)
 
 > src.main.resources 경로를 .gitignore에 미리 등록해 두었습니다.
 
