@@ -90,9 +90,9 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 
 전체적인 Flow는 다음과 같습니다.
  1. main 브랜치에 pr에 merge되는 순간 github actions의 CD workflow가 동작합니다.
- 2. workflow에서는 DockerFile을 통해 react 혹은 spring 애플리케이션 이미지를 생성한 뒤 DockerHub에 Push합니다.
- 3. 이후 EC2의 self hosted runners를 동작시켜 DockerHub에서 DockerFile을 Pull 받습니다.
- 4. Pull 받은 DockerFile을 실행시킵니다.
+ 2. workflow에서는 Dockerfile을 통해 react 혹은 spring 애플리케이션 이미지를 생성한 뒤 DockerHub에 Push합니다.
+ 3. 이후 EC2의 self hosted runners를 동작시켜 DockerHub에서 Dockerfile을 Pull 받습니다.
+ 4. Pull 받은 Dockerfile을 실행시킵니다.
 
 이제부터 위 아키텍처를 차근차근 구성해 나가도록 할텐데요, 그 전에 Docker에 대해서 정말 간단히만 알아보도록 하겠습니다.
 자세한 내용은 [공식문서](https://docs.docker.com/)를 포함한 여러 좋은 자료들이 있으므로 이들을 참고해주시면 좋을 것 같습니다.😎
@@ -100,7 +100,7 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 <br/>
 <br/>
 
-### 🚀 DockerFile이 뭔가요?
+### 🚀 Dockerfile이 뭔가요?
 `Docker Image`를 만들기 위한 설정 파일입니다.
 
 <br/>
@@ -130,26 +130,27 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 ## 🧐 백엔드 CD 플로우를 로컬에서 실행해보기
 
 Docker를 통한 CD workflow를 작성하기 전에, 어떤 식으로 동작하는지를 알아야겠죠?<br/>
-그래서 우선 전체적인 과정을 로컬에서 직접 진행한 뒤, 해당 과정을 바탕으로 workflow를 작성하여 실행하도록 하겠습니다.
+그래서 우선 전체적인 과정을 로컬에서 직접 진행한 뒤, 해당 과정을 바탕으로 workflow를 작성하여 실행하도록 하겠습니다.<br/>
+(이 과정은 로컬에 도커가 깔려 있다고 가정하고 진행합니다. 이에 대해서는 이미 여러 블로그나 공식문서에서 설치법을 알려주기 때문에 넘어가도록 하겠습니다.)
 
 <br/>
 <br/>
 
-### 🚀 DockerFile 작성하기
+### 🚀 Dockerfile 작성하기
 
-작성된 DockerFile은 아래와 같습니다.
+작성된 Dockerfile은 아래와 같습니다.
 
 ```dockerfile
 FROM amazoncorretto:17-alpine-jdk
 
 WORKDIR /app
 
-COPY .backend/build/libs/celuveat-0.0.1-SNAPSHOT.jar /app/celuveat.jar
+COPY ./build/libs/celuveat-0.0.1-SNAPSHOT.jar /app/celuveat.jar
 
 CMD ["java", "-jar", "celuveat.jar"]
 ```
 
-한줄 한줄 살펴보도록 하겠습니다.
+한 줄 한 줄 살펴보도록 하겠습니다.
 
 <br/>
 <br/>
@@ -196,17 +197,17 @@ Jar 파일을 실행시키는 부분입니다.
 <br/>
 <br/>
 
-### 🚀 DockerFile을 통해 Docker Image 빌드하기
+### 🚀 Dockerfile을 통해 Docker Image 빌드하기
 
-이제 위 DockerFile을 빌드하여 Docker Image를 생성해보도록 하겠습니다.
+이제 위 Dockerfile을 빌드하여 Docker Image를 생성해보도록 하겠습니다.
 
 
-DockerFile의 위치는 다음과 같습니다.
-![dockerfile](./dockerfile1.png)
+Dockerfile의 위치는 다음과 같습니다.
+![Dockerfile](./Dockerfile1.png)
 
 <br/>
 
-DockerFile을 통해 Docker Image를 빌드하기 전에 Jar파일을 우선 빌드해야 합니다.
+Dockerfile을 통해 Docker Image를 빌드하기 전에 Jar파일을 우선 빌드해야 합니다.
 
 
 ```bash
@@ -219,10 +220,10 @@ DockerFile을 통해 Docker Image를 빌드하기 전에 Jar파일을 우선 빌
 이후 다음 명령어를 통해 이미지를 빌드합니다.
 
 ```bash
-docker build -t celuveat/celuveat-backend ./
+docker build -t celuveat/celuveat ./
 ```
 
-- `-t <name>:<tag>` : 빌드할 Image의 이름과 tag를 정해줍니다.
+`-t <name>:<tag>` : 빌드할 Image의 이름과 tag를 정해줍니다.<br/>
  이때 tag는 생략 가능하며, 이름의 경우 편의를 위해 이후 생성할 DockerHub의 namespace/repository으로 지정하였습니다. <br/>
  저는 tag를 생략했으며, 이 경우 `latest`가 default tag로 붙습니다.
 
@@ -267,7 +268,7 @@ docker run \
 --name backend \
 -p 8080:8080 \
 -e "SPRING_PROFILE=local" \
-celuveat/celuveat-backend
+celuveat/celuveat
 ```
 
 - -d : 백그라운드로 실행합니다.
@@ -275,7 +276,7 @@ celuveat/celuveat-backend
 - --rm : 컨테이너가 종료되면 자동으로 컨테이너를 제거합니다.
 - -p 8080:8080 : 호스트의 포트(외부 포트)(좌측 8080)를 컨테이너의 포트 8080으로 매핑합니다.
 - -e : 환경변수를 설정합니다.
-- celuveat/celuveat-backend : 실행할 Docker Image의 이름(정확히는 태그)을 명시합니다.
+- celuveat/celuveat : 실행할 Docker Image의 이름(정확히는 태그)을 명시합니다.
 
 <br/>
 
@@ -304,12 +305,6 @@ docker stop backend || true
 여기서 `backend`는 `container`의 이름입니다.
 - || true : 도중에 오류가 발생해도 스크립트를 중단하지 않고 계속 진행하도록 합니다.
 
-![dockerstop](./dockerstop.png)
-
-다음과 같이 컨테이너가 종료되었으며, --rm 옵션으로 인해 자동으로 제거된 것 까지 확인할 수 있습니다.
-
-
-
 <br/>
 <br/>
 <br/>
@@ -332,7 +327,7 @@ docker stop backend || true
 ```bash
 docker login
 ```
-
+TODO 이거 사진 바꾸기
 ![login](./dockerlogin.png)
 
 
@@ -340,9 +335,10 @@ docker login
 <br/>
 
 ```bash
-docker push celuveat/celuveat-backend
+docker push celuveat/celuveat
 ```
 
+TODO 이거 사진 바꾸기
 ![push](./dockerhubpush.png)
 
 (이때 만약 build 시 tag를 다르게 주었다면, 다음 명령어를 통해 tag를 새로 달아주어야 합니다.
@@ -354,6 +350,7 @@ docker tag <로컬이미지이름>:<태그> <dockerhub namespace>/<repository �
 <br/>
 <br/>
 
+TODO 이거 사진 바꾸기
 push 이후 DockerHub의 Repository로 들어가보면, 다음과 같이 이미지가 push되어 있는것을 확인 수 있습니다.
 ![pushed](./pushed.png)
 
@@ -441,10 +438,11 @@ newgrp docker
 DockerHub에서 Image를 Pull 하도록 하겠습니다.
 
 ```bash
-docker pull celuveat/celuveat-backend
+docker pull celuveat/celuveat
 ```
 (만약 태그를 붙여주었다면 태그도 같이 명시해주어야 합니다. 명시하지 않으면 latest가 default로 붙습니다.)
 
+TODO 이거 사진 바꿔야함
 ![pulled](./dockerpulled.png)
 
 <br/>
@@ -457,7 +455,7 @@ docker run \
 --name backend \
 -p 8080:8080 \
 -e "SPRING_PROFILE=local" \
-celuveat/celuveat-backend
+celuveat/celuveat
 ```
 
 ![docker run2](./dockerun2.png)
@@ -480,7 +478,7 @@ name: ✨ Celuveat backend PROD CD ✨
 
 env:
   PROFILE: prod
-  IMAGE_TAG: prod-${{ secrets.APP_VERSION_TAG }}
+  IMAGE_TAG: back-prod-${{ secrets.APP_VERSION_TAG }}
   DOCKER_CONTAINER_NAME: backend
 
 on:
@@ -563,7 +561,7 @@ jobs:
 ```yml
 env:
   PROFILE: prod
-  IMAGE_TAG: prod-${{ secrets.APP_VERSION_TAG }}
+  IMAGE_TAG: back-prod-${{ secrets.APP_VERSION_TAG }}
   DOCKER_CONTAINER_NAME: backend
 ```
 yml 내에서 사용할 변수들을 정의해주는 부분입니다.
@@ -711,7 +709,7 @@ Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는
 ```
 - [docker/build-push-action@v4](https://github.com/docker/build-push-action)를 통해 DockerHub에 이미지를 push하는 과정을 진행합니다.
 - context: Docker Image를 빌드할 컨텍스트 경로를 지정합니다. ./backend를 통해 백엔드 디렉토리로 지정했습니다.
-- file: 이미지를 빌드할 DockerFile의 위치를 지정합니다.
+- file: 이미지를 빌드할 Dockerfile의 위치를 지정합니다.
 - push: DockerHub에 이미지를 푸쉬할지 여부를 지정합니다. true로 설정하여 푸쉬하도록 해주었습니다.
 - 빌드할 이미지 플랫폼을 지정합니다. 저희의 서버는 ubuntu(Linux/UNIX) 64-bit(ARM) 이므로 linux/arm64로 지정하였습니다.
 - 빌드될 이미지의 태그를 지정합니다.
@@ -720,6 +718,7 @@ Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는
 <br/>
 
 위 과정을 진행하면 DockerHub에 다음과 같이 이미지가 올라가게됩니다.
+TODO 이거 사진 바꿔야함
 ![pushed](./dockerhubpushed.png)
 
 이어서 EC2에서 Self hosted Runner를 통해 해당 이미지를 Pull 받아 실행하는 부분을 살펴보겠습니다.
