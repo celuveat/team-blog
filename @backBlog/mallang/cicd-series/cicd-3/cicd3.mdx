@@ -43,10 +43,10 @@ tags:
 가장 간단히 생각할 수 있는 방법으로는 `Swap Memory`를 더 많이 할당하는 것입니다.
 
 다음 [RedHat의 문서](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_storage_devices/getting-started-with-swap_managing-storage-devices#recommended-system-swap-space_getting-started-with-swap)에 따라
-서버의 RAM이 2GiB인 저희는 2배인 4GB 정도를 할당하는 것으로 가장 무난하게 문제를 해결할 수 있습니다.
+서버의 RAM이 2GiB인 저희는 2배인 4GB 정도를 할당하는 것으로 가장 무난하게 문제를 해결할 수 있습니다.<br/>
 스토리지 용량도 20GB를 할당하여 사용하고 있으므로, 4GB의 Swap Memory로 인해 문제가 생길 것이라고는 판단되지 않습니다.
 
-위 방법으로 해결하는 것이 가장 간단했지만, 이왕 문제가 발생한김에 기존에 불편하다고 느꼈던 부분들도 모두 해결하기 위해 다른 방법을 사용하기로 결정했습니다.
+위 방법으로 해결하는 것이 가장 간단하겠지만, 이왕 문제가 발생한김에 기존에 불편하다고 느꼈던 부분들도 모두 해결하기 위해 다른 방법을 사용하기로 결정했습니다.
 
 <br />
 <br />
@@ -74,7 +74,7 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 <br/>
 
 우테코가 끝난 뒤 프로젝트를 지속하기 위해 서버를 따로 사용할 경우에도 위와 같은 설정을 또 진행해 주어야 하는데요,
-상상만 해도 너무 귀찮은 나머지 이러한 불편함을 해소하고자 `Docker 🐳`를 도입하기로 했습니다.
+상상만 해도 너무 귀찮은 나머지 이러한 불편함을 해소하고자 `🐳 Docker`를 도입하기로 했습니다.
 
 
 <br/>
@@ -91,7 +91,7 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 전체적인 Flow는 다음과 같습니다.
  1. main 브랜치에 pr에 merge되는 순간 github actions의 CD workflow가 동작합니다.
  2. workflow에서는 DockerFile을 통해 react 혹은 spring 애플리케이션 이미지를 생성한 뒤 DockerHub에 Push합니다.
- 3. 이후 self hosted runners를 동작시켜 DockerHub에서 DockerFile을 Pull 받습니다.
+ 3. 이후 EC2의 self hosted runners를 동작시켜 DockerHub에서 DockerFile을 Pull 받습니다.
  4. Pull 받은 DockerFile을 실행시킵니다.
 
 이제부터 위 아키텍처를 차근차근 구성해 나가도록 할텐데요, 그 전에 Docker에 대해서 정말 간단히만 알아보도록 하겠습니다.
@@ -114,10 +114,10 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 <br/>
 
 ### 🚀 Docker Container는 뭔가요?
-컨테이너는 이미지의 실행 가능한 인스턴스입니다.
-즉 이미지로부터 컨테이너가 생성되며, 컨테이너는 코드와 모든 종속성을 패키지화하여 응용 프로그램이 하나의 컴퓨팅 환경에서 실행될 수 있도록 합니다.
+컨테이너는 이미지의 실행 가능한 인스턴스입니다.<br/>
+이미지로부터 컨테이너가 생성되며, 컨테이너는 코드와 모든 종속성을 패키지화하여 응용 프로그램이 하나의 컴퓨팅 환경에서 실행될 수 있도록 합니다.<br/>
 
-
+즉 쉽게 말해 컨테이너 속에 Spring 등의 애플리케이션이 들어있고, 컨테이너를 실행함으로써 내부의 애플리케이션이 실행되는 것이라 생각하면 편합니다.
 
 <br/>
 <br/>
@@ -129,7 +129,7 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 
 ## 🧐 백엔드 CD 플로우를 로컬에서 실행해보기
 
-바로 Docker를 통한 CD workflow를 작성하기 전에, 어떤 식으로 동작하는지를 알아야겠죠?<br/>
+Docker를 통한 CD workflow를 작성하기 전에, 어떤 식으로 동작하는지를 알아야겠죠?<br/>
 그래서 우선 전체적인 과정을 로컬에서 직접 진행한 뒤, 해당 과정을 바탕으로 workflow를 작성하여 실행하도록 하겠습니다.
 
 <br/>
@@ -325,7 +325,9 @@ docker stop backend || true
 <br/>
 <br/>
 
-이제 이곳에 push하는것은 간단합니다.
+해당 Repository에 push하는것은 간단합니다.
+
+우선 로그인을 진행합니다.
 
 ```bash
 docker login
@@ -343,8 +345,6 @@ docker push celuveat/celuveat-backend
 
 ![push](./dockerhubpush.png)
 
-<br/>
-
 (이때 만약 build 시 tag를 다르게 주었다면, 다음 명령어를 통해 tag를 새로 달아주어야 합니다.
 ```java
 docker tag <로컬이미지이름>:<태그> <dockerhub namespace>/<repository 이름>:<태그>
@@ -354,7 +354,7 @@ docker tag <로컬이미지이름>:<태그> <dockerhub namespace>/<repository �
 <br/>
 <br/>
 
-push 이후 DockerHub의 Repository로 들어가보면, 다음과 같이 잘 push되어 있는것을 확인 수 있습니다.
+push 이후 DockerHub의 Repository로 들어가보면, 다음과 같이 이미지가 push되어 있는것을 확인 수 있습니다.
 ![pushed](./pushed.png)
 
 <br/>
@@ -364,7 +364,7 @@ push 이후 DockerHub의 Repository로 들어가보면, 다음과 같이 잘 pus
 <br/>
 
 ### 🚀 EC2에서 Image를 Pull 받아 실행해보기
-이제 EC2에서 DockerHub에 올라간 이미지를 Pull받아 이를 실행시키도록 하겠습니다.
+이제 EC2에서 DockerHub에 올라간 이미지를 Pull받아 이를 실행시키도록 하겠습니다.<br/>
 우선 이를 위해 테스트용 EC2를 하나 새로 생성해 주었습니다.
 
 Docker를 사용하기 때문에 EC2에 java를 따로 설치할 필요는 없지만, docker는 설치해주어야 합니다.<br/>
@@ -554,10 +554,10 @@ jobs:
             celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
 ```
 
-<br/>
 
 이를 하나하나 살펴보도록 하겠습니다.
 
+<br/>
 <br/>
 
 ```yml
@@ -784,7 +784,7 @@ steps:
 
 ## 🧐 성능 향상 고려하기
 
-### 1. Gradle Caching
+### 🚀 Gradle Caching
 
 현재 github actions의 workflow가 (jar 파일의 변경 없이) 전체 작업을 수행하는데 걸리는 시간은 다음과 같습니다.
 
