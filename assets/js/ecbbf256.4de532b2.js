@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkceluveat_team_blog=self.webpackChunkceluveat_team_blog||[]).push([[6919],{8637:e=>{e.exports=JSON.parse('{"permalink":"/team-blog/back-blog/tags/\uc778\ud504\ub77c","page":1,"postsPerPage":10,"totalPages":1,"totalCount":3,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);

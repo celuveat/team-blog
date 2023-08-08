@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkceluveat_team_blog=self.webpackChunkceluveat_team_blog||[]).push([[5097],{3754:e=>{e.exports=JSON.parse('{"permalink":"/team-blog/back-blog/tags/ci-cd","page":1,"postsPerPage":10,"totalPages":1,"totalCount":3,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
