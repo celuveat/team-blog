@@ -1,7 +1,7 @@
 ---
 date: 2023-08-07
 authors: shin-mallang
-title: "셀럽잇 CI/CD 발전기 - (3)"
+title: "셀럽잇 CI/CD 발전기 - (3-1) 백엔드의 docker와 github actions를 통한 배포 자동화"
 description: "셀럽잇 팀의 CI/CD 발전기"
 keywords: ["CI/CD", "인프라"]
 tags:
@@ -11,7 +11,7 @@ tags:
   - docker
 ---
 
-셀럽잇 CI/CD 발전기 - (3)
+셀럽잇 CI/CD 발전기 - (3-1) 백엔드의 docker와 github actions를 통한 배포 자동화
 
 <!--truncate-->
 
@@ -525,7 +525,7 @@ jobs:
       - name: ✨ Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./backend
           file: ./backend/Dockerfile
           push: true
           platforms: linux/arm64
@@ -710,7 +710,7 @@ Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는
     tags: celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
 ```
 - [docker/build-push-action@v4](https://github.com/docker/build-push-action)를 통해 DockerHub에 이미지를 push하는 과정을 진행합니다.
-- context: Docker Image를 빌드할 컨텍스트 경로를 지정합니다. ./backend을 통해 백엔드 디렉토리(루트)로 지정했습니다.
+- context: Docker Image를 빌드할 컨텍스트 경로를 지정합니다. ./backend를 통해 백엔드 디렉토리로 지정했습니다.
 - file: 이미지를 빌드할 DockerFile의 위치를 지정합니다.
 - push: DockerHub에 이미지를 푸쉬할지 여부를 지정합니다. true로 설정하여 푸쉬하도록 해주었습니다.
 - 빌드할 이미지 플랫폼을 지정합니다. 저희의 서버는 ubuntu(Linux/UNIX) 64-bit(ARM) 이므로 linux/arm64로 지정하였습니다.
@@ -754,11 +754,9 @@ steps:
 - docker login ~ : dockerhub에 로그인하는 부분입니다.
 - docker pull ~ : 이전 작업에서 dockerhub에 push한 이미지를 pull하는 부분입니다.
 - docker stop ~ : EC2에 실행중인 docker container(여기서는 Spring Application)가 있으면 이를 종료합니다.
-- || true : 명령어 실행 중 오류가 발생하더라도 스크립트를 계속 실행하도록 합니다. 여기서는 stop 명령어 실행 시 컨테이너가 없더라도 오류가 발생하지 않도록 합니다.
-
-
-<br/>
-<br/>
+  - || true 를 통해 backend라는 컨테이너가 없더라도 오류가 발생하지 않고 진행하도록 합니다.
+- docker container prune -f: 사용하지 않는 도커 컨테이너를 제거합니다. -f를 통해 사용자의 확인을 묻지 않고 진행합니다.
+- docker image prune -f: 이름 없는 모든 이미지를 삭제합니다.
 
 
 <br/>
@@ -775,6 +773,9 @@ steps:
       celuveat/celuveat-backend:${{ env.IMAGE_TAG }
 ```
 
+위 옵션들은 모두 이전에 설명한 옵션들이므로 따로 설명하지 않겠습니다.
+
+<br/>
 <br/>
 <br/>
 <br/>
@@ -782,6 +783,155 @@ steps:
 <br/>
 
 ## 🧐 성능 향상 고려하기
+
+### 1. Gradle Caching
+
+현재 github actions의 workflow가 (jar 파일의 변경 없이) 전체 작업을 수행하는데 걸리는 시간은 다음과 같습니다.
+
+![no-caching-1](./no-caching-1.png)
+![no-caching-2](./no-caching-2.png)
+![no-caching-3](./no-caching-3.png)
+![no-caching-4](./no-caching-4.png)
+
+평균적으로 1분 10초 정도의 시간이 걸리는 것을 알 수 있습니다.
+
+이를 줄이기 위해 Gradle Caching을 해보도록 하겠습니다.
+
+<br/>
+<br/>
+
+### Gradle Caching이란?
+(참고 - [공식문서](https://docs.gradle.org/current/userguide/core_dependency_management.html#sec:dependency-mgmt-in-gradle))<br/>
+Gradle은 빌드 시에 작업(Task)의존성 패키지들을 모두 가져온 뒤, 이들을 dependency cache라 불리는 로컬 캐시에 보관하여
+이후 호출에서 불필요한 네트워크 호출을 방지하는 전략을 사용합니다.
+
+그러나 Github Actions의 workflow에서는 매 실행마다 새롭게 의존성들을 가지고 오게 됩니다.<br/>
+의존성을 가져오기 위해 대체로 네트워크 호출을 사용하기 때문에, 해당 과정이 없어진다면 전체 빌드 시간이 매우 단축될 것이라 예상할 수 있습니다.
+
+한번 Gradle Caching을 적용하여 성능 향상이 얼마나 이루어지는지 확인해보도록 하겠습니다.
+방법은 매우 간단합니다.
+```yml
+- name: ✨ Gradle Caching
+  uses: actions/cache@v3
+  with:
+    path: |
+        ~/.gradle/caches
+        ~/.gradle/wrapper
+    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+    restore-keys: |
+        ${{ runner.os }}-gradle-
+```
+
+위 코드를 추가해주면 되는데요, 이를 적용한 전체 workflow는 다음과 같습니다.
+
+<br/>
+<br/>
+
+```yml
+name: ✨ Celuveat backend PROD CD ✨
+
+env:
+  PROFILE: prod
+  IMAGE_TAG: prod-${{ secrets.APP_VERSION_TAG }}
+  DOCKER_CONTAINER_NAME: backend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+
+jobs:
+  backend-docker-build-and-push:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: ✨ Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          token: ${{ secrets.ACTION_TOKEN }}
+
+      - name: ✨ JDK 17 설정
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: ✨ Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+              ~/.gradle/caches
+              ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+              ${{ runner.os }}-gradle-
+
+      - name: ✨ Gradlew 권한 설정
+        run: chmod +x ./gradlew
+
+      - name: ✨ Jar 파일 빌드
+        run: ./gradlew bootJar
+
+      - name: ✨ DockerHub에 로그인
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+
+      - name: ✨ Docker Image 빌드 후 DockerHub에 Push
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+
+  backend-docker-pull-and-run:
+    runs-on: [self-hosted, prod]
+    if: ${{ needs.backend-docker-build-and-push.result == 'success' }}
+    needs: [ backend-docker-build-and-push ]
+    steps:
+      - name: ✨ DockerHub에서 Image Pull
+        run: |
+          docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+          docker pull celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+          docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
+          docker container prune -f
+          docker image prune -f
+
+      - name: ✨ Docker Image 실행
+        run: |
+          docker run \
+            -d \
+            --name ${{ env.DOCKER_CONTAINER_NAME }} \
+            -p 8080:8080 \
+            -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
+            celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+```
+
+<br/>
+<br/>
+
+캐싱을 적용한 github actions의 workflow가 (jar 파일의 변경 없이) 전체 작업을 수행하는데 걸리는 시간은 다음과 같습니다.
+
+#### 첫 실행
+![no-caching-5](./no-caching-4.png)
+
+#### 이후 실행
+![no-caching-6](./no-caching-4.png)
+![no-caching-7](./no-caching-4.png)
+![no-caching-8](./no-caching-4.png)
+![no-caching-9](./no-caching-4.png)
+
 Volumn을 사용해서 build된 파일만 보내주고, 이를 실행만 시킴으로써 환경 구성은 그대로 두고 성능 향상 꾀하기
 
 그래이들 캐싱도 얼마나 단축되는지?
+
+### 2. 도커 이미지에서 jar파일 제거
