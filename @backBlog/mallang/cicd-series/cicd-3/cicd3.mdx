@@ -1,7 +1,7 @@
 ---
 date: 2023-08-07
 authors: shin-mallang
-title: "셀럽잇 CI/CD 발전기 - (3-1) 백엔드의 docker와 github actions를 통한 배포 자동화"
+title: "셀럽잇 CI/CD 발전기 - (3) docker와 github actions를 통한 배포 자동화"
 description: "셀럽잇 팀의 CI/CD 발전기"
 keywords: ["CI/CD", "인프라"]
 tags:
@@ -11,7 +11,7 @@ tags:
   - docker
 ---
 
-셀럽잇 CI/CD 발전기 - (3-1) 백엔드의 docker와 github actions를 통한 배포 자동화
+셀럽잇 CI/CD 발전기 - (3) docker와 github actions를 통한 배포 자동화
 
 <!--truncate-->
 
@@ -128,7 +128,6 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 <br/>
 
 ## 🧐 백엔드 CD 플로우를 로컬에서 실행해보기
-
 Docker를 통한 CD workflow를 작성하기 전에, 어떤 식으로 동작하는지를 알아야겠죠?<br/>
 그래서 우선 전체적인 과정을 로컬에서 직접 진행한 뒤, 해당 과정을 바탕으로 workflow를 작성하여 실행하도록 하겠습니다.<br/>
 (이 과정은 로컬에 도커가 깔려 있다고 가정하고 진행합니다. 이에 대해서는 이미 여러 블로그나 공식문서에서 설치법을 알려주기 때문에 넘어가도록 하겠습니다.)
@@ -482,6 +481,7 @@ env:
   DOCKER_CONTAINER_NAME: backend
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -574,6 +574,7 @@ yml 내에서 사용할 변수들을 정의해주는 부분입니다.
 
 ```yml
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -583,6 +584,8 @@ on:
 해당 워크플로우가 언제 동작할지를 정의하는 부분입니다.
 
 main 브랜치에 push가 발생하였을 때, backend의 하위 디렉토리에 변경이 생겼을 경우 해당 workflow가 동작합니다.
+
+- workflow_dispatch: 워크플로우를 수동으로 트리거할 수 있도록 합니다.
 
 <br/>
 <br/>
@@ -774,131 +777,159 @@ steps:
 
 위 옵션들은 모두 이전에 설명한 옵션들이므로 따로 설명하지 않겠습니다.
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-## 🧐 성능 향상 고려하기
-
-### 🚀 Gradle Caching
-
-현재 github actions의 workflow가 (jar 파일의 변경 없이) 전체 작업을 수행하는데 걸리는 시간은 다음과 같습니다.
-
-![no-caching-1](./no-caching-1.png)
-![no-caching-2](./no-caching-2.png)
-![no-caching-3](./no-caching-3.png)
-![no-caching-4](./no-caching-4.png)
-
-평균적으로 1분 10초 정도의 시간이 걸리는 것을 알 수 있습니다.
-
-이를 줄이기 위해 Gradle Caching을 해보도록 하겠습니다.
+이렇게 해서 백엔드의 CD 설정이 끝났습니다. 이어서 프론트엔드로 넘어가도록 하겠습니다.
 
 <br/>
 <br/>
 <br/>
+<br/>
+<br/>
+<br/>
 
-### Gradle Caching이란?
-(참고 - [공식문서](https://docs.gradle.org/current/userguide/core_dependency_management.html#sec:dependency-mgmt-in-gradle))<br/>
-Gradle은 빌드 시에 작업(Task)의존성 패키지들을 모두 가져온 뒤, 이들을 dependency cache라 불리는 로컬 캐시에 보관하여
-이후 호출에서 불필요한 네트워크 호출을 방지하는 전략을 사용합니다.
 
-그러나 Github Actions의 workflow에서는 매 실행마다 새롭게 의존성들을 가지고 오게 됩니다.<br/>
-의존성을 가져오기 위해 대체로 네트워크 호출을 사용하기 때문에, 해당 과정이 없어진다면 전체 빌드 시간이 매우 단축될 것이라 예상할 수 있습니다.
+## 🧐 프론트엔드 Dockerfile 작성하기
+```dockerfile
+FROM node:18-alpine
 
-한번 Gradle Caching을 적용하여 성능 향상이 얼마나 이루어지는지 확인해보도록 하겠습니다.
-방법은 매우 간단합니다.
-```yml
-- name: ✨ Gradle Caching
-  uses: actions/cache@v3
-  with:
-    path: |
-        ~/.gradle/caches
-        ~/.gradle/wrapper
-    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-    restore-keys: |
-        ${{ runner.os }}-gradle-
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+
+RUN yarn install
+
+COPY . .
+
+RUN yarn build
+
+CMD ["yarn", "start", "--port", "3000"]
+```
+한 줄 한 줄 살펴보도록 하겠습니다.
+
+<br />
+<br />
+
+```dockerfile
+FROM node:18-alpine
 ```
 
-위 코드를 추가해주면 되는데요, 이를 적용한 전체 workflow는 다음과 같습니다.
+Docker 이미지 생성 시 기반이 되는 이미지 레이어를 정의하는 부분입니다.<br/>
+저희의 프로젝트는 node 18.16.1버전을 사용하므로 node:18-alpine을 사용했습니다.
 
-<br/>
-<br/>
 
+<br />
+<br />
+
+```dockerfile
+WORKDIR /app
+```
+
+도커 컨테이너 내에서의 작업 디렉토리를 `/app`으로 설정합니다.<br/>
+이후 진행되는 작업들은 모두 `/app`  내부에서 진행됩니다.
+
+<br />
+<br />
+
+```dockerfile
+COPY package.json yarn.lock ./
+```
+이 부분은 사용자의 컴퓨터(호스트)의 package.json과 yarn.lock 파일을
+컨테이너 내부로 복사합니다.
+이 두 파일만 먼저 수행하는 이유는 성능상의 이유 때문인데, 위 두 파일을 자주 변경되지 않으므로 먼저 복사하여 도커 레이어를 캐싱해두면 이후 빌드가 더 빨라집니다.
+
+<br />
+<br />
+
+```dockerfile
+RUN yarn install
+```
+
+yarn install 명령을 실행하여 package.json에 명시된 종속성들을 설치합니다.
+
+<br />
+<br />
+
+```dockerfile
+COPY . .
+```
+
+이 부분은 사용자의 컴퓨터(호스트)의 모든 파일을 컨테이너 내부로 복사합니다.
+
+<br />
+<br />
+
+```dockerfile
+RUN yarn build
+```
+
+애플리케이션을 빌드합니다.
+
+<br />
+<br />
+
+```dockerfile
+CMD ["yarn", "start", "--port", "3000"]
+```
+3000번 포트로 애플리케이션을 실행합니다.
+
+<br />
+<br />
+<br />
+
+## 🧐 프론트엔드 CD workflow 작성하기
 ```yml
-name: ✨ Celuveat backend PROD CD ✨
+name: 🍔 Celuveat frontend PROD CD 🍔
 
 env:
   PROFILE: prod
-  IMAGE_TAG: prod-${{ secrets.APP_VERSION_TAG }}
-  DOCKER_CONTAINER_NAME: backend
+  IMAGE_TAG: front-prod-${{ secrets.APP_VERSION_TAG }}
+  DOCKER_CONTAINER_NAME: frontend
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
-      - "backend/**"
+      - "frontend/**"
 
 jobs:
-  backend-docker-build-and-push:
-    runs-on: ubuntu-latest
+  deploy-frontend:
+    runs-on: [self-hosted, prod]
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: ./frontend
 
     steps:
-      - name: ✨ Checkout repository
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-          token: ${{ secrets.ACTION_TOKEN }}
+      - uses: actions/checkout@v2
 
-      - name: ✨ JDK 17 설정
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+      - name: 🍔 .env 파일 세팅
+        run: |
+          touch .env
+          echo GOOGLE_MAP_API_KEY=${{ secrets.GOOGLE_MAP_API_KEY }} > .env
+          echo BASE_URL=${{ secrets.PROD_BASE_URL }} >> .env
 
-      - name: ✨ Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-              ~/.gradle/caches
-              ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-              ${{ runner.os }}-gradle-
-
-      - name: ✨ Gradlew 권한 설정
-        run: chmod +x ./gradlew
-
-      - name: ✨ Jar 파일 빌드
-        run: ./gradlew bootJar
-
-      - name: ✨ DockerHub에 로그인
+      - name: 🍔 DockerHub에 로그인
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
           password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
 
-      - name: ✨ Docker Image 빌드 후 DockerHub에 Push
+      - name: 🍔 Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: ./frontend
+          file: ./frontend/Dockerfile
           push: true
           platforms: linux/arm64
           tags: celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
 
-  backend-docker-pull-and-run:
+  frontend-docker-pull-and-run:
     runs-on: [self-hosted, prod]
-    if: ${{ needs.backend-docker-build-and-push.result == 'success' }}
-    needs: [ backend-docker-build-and-push ]
+    if: ${{ needs.deploy-frontend.result == 'success' }}
+    needs: [ deploy-frontend ]
+
     steps:
-      - name: ✨ DockerHub에서 Image Pull
+      - name: 🍔 DockerHub에서 Image Pull
         run: |
           docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
           docker pull celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
@@ -906,46 +937,25 @@ jobs:
           docker container prune -f
           docker image prune -f
 
-      - name: ✨ Docker Image 실행
+      - name: 🍔 Docker Image 실행
         run: |
           docker run \
             -d \
             --name ${{ env.DOCKER_CONTAINER_NAME }} \
-            -p 8080:8080 \
-            -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
+            -p 3000:3000 \
             celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
 ```
-
-<br/>
-<br/>
-
-캐싱을 적용한 github actions의 workflow가 (jar 파일의 변경 없이) 전체 작업을 수행하는데 걸리는 시간은 다음과 같습니다.
-
-#### 첫 실행
-![yes-caching-1](./yes-caching-1.png)
-
-#### 이후 실행
-![yes-caching-2](./yes-caching-2.png)
-![yes-caching-3](./yes-caching-3.png)
-![yes-caching-4](./yes-caching-4.png)
-![yes-caching-5](./yes-caching-5.png)
-
-<br/>
-
-간단한 그래이들 캐싱만으로도 (첫 실행 제외) 성능이 대략 25%정도 향상된 것을 확인할 수 있습니다.
+위 부분은 백엔드와 거의 동일하므로 별다른 설명 없이 마치도록 하겠습니다.
 
 <br/>
 <br/>
 <br/>
+
+이렇게 해서 이번 글에서는 저희 셀럽잇 팀의 Docker를 통한 CD 환경 구축 과정을 살펴보았습니다.
+
+읽어주셔서 감사합니다 😊
+
 <br/>
-<br/>
-
-이 방법 외에도, COPY 대신 BIND MOUNT를 활용하여 성능을 좀 더 높여볼 수 있겠다고 생각하지만,
-지금은 시간이 너무 없어서 다음으로 미뤄야 할 것 같습니다..!!
-
-이렇게 해서 이번 글에서는 저희 백엔드 팀의 Docker를 통한 CD 환경 구축 과정을 살펴보았고, <br/>
-다음 글에서는 프론트엔드 팀의 Docker를 통한 CD 환경 구축 과정을 살펴보겠습니다.
-
 <br/>
 <br/>
 
