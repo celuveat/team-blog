@@ -326,7 +326,6 @@ docker stop backend || true
 ```bash
 docker login
 ```
-TODO 이거 사진 바꾸기
 ![login](./dockerlogin.png)
 
 
@@ -337,7 +336,6 @@ TODO 이거 사진 바꾸기
 docker push celuveat/celuveat
 ```
 
-TODO 이거 사진 바꾸기
 ![push](./dockerhubpush.png)
 
 (이때 만약 build 시 tag를 다르게 주었다면, 다음 명령어를 통해 tag를 새로 달아주어야 합니다.
@@ -349,7 +347,6 @@ docker tag <로컬이미지이름>:<태그> <dockerhub namespace>/<repository �
 <br/>
 <br/>
 
-TODO 이거 사진 바꾸기
 push 이후 DockerHub의 Repository로 들어가보면, 다음과 같이 이미지가 push되어 있는것을 확인 수 있습니다.
 ![pushed](./pushed.png)
 
@@ -428,7 +425,7 @@ newgrp docker
 <br/>
 
 이제 다시 로그인을 시도하면 성공하는 것을 확인할 수 있습니다.
-![login](./dockerlogin.png)
+![login](./dockerlogin2.png)
 
 <br/>
 <br/>
@@ -441,7 +438,6 @@ docker pull celuveat/celuveat
 ```
 (만약 태그를 붙여주었다면 태그도 같이 명시해주어야 합니다. 명시하지 않으면 latest가 default로 붙습니다.)
 
-TODO 이거 사진 바꿔야함
 ![pulled](./dockerpulled.png)
 
 <br/>
