@@ -796,7 +796,7 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .
 
 RUN yarn install
 
@@ -833,7 +833,7 @@ WORKDIR /app
 <br />
 
 ```dockerfile
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .
 ```
 이 부분은 사용자의 컴퓨터(호스트)의 package.json과 yarn.lock 파일을
 컨테이너 내부로 복사합니다.
@@ -898,7 +898,7 @@ on:
 
 jobs:
   frontend-build-and-push:
-    runs-on: [self-hosted, prod]
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./frontend
@@ -919,6 +919,10 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
+      # Dockerfile에서 yarn 사용하려면 필요함
+      - name: 🍔 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: 🍔 Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
         with:
@@ -927,6 +931,8 @@ jobs:
           push: true
           platforms: linux/arm64
           tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   frontend-docker-pull-and-run:
     runs-on: [self-hosted, prod]
@@ -950,7 +956,11 @@ jobs:
             -p 3000:3000 \
             ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 ```
-위 부분은 백엔드와 거의 동일하므로 별다른 설명 없이 마치도록 하겠습니다.
+
+- cache-from, cache-to: 다음 글에서 자세히 설명할 예정이지만, 간단하게는 도커 레이어의 캐싱을 위해 사용합니다.
+이를 사용하지 않으면 매번 10분정도 걸리는 빌드 시간이 (yarn install의 캐싱으로 인해) 절반가량 줄어들게 됩니다.
+
+나머지 부분은 백엔드와 거의 동일하므로 별다른 설명 없이 마치도록 하겠습니다.
 
 <br/>
 <br/>
@@ -1077,7 +1087,7 @@ jobs:
     steps:
       - name: ✨ DockerHub에서 Image Pull
         run: |
-          docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+          docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_PASSWORD }}
           docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
           docker container prune -f
