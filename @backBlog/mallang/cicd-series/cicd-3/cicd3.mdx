@@ -1,7 +1,7 @@
 ---
 date: 2023-08-07
 authors: shin-mallang
-title: "셀럽잇 CI/CD 발전기 - (3-1) 백엔드의 docker와 github actions를 통한 배포 자동화"
+title: "셀럽잇 CI/CD 발전기 - (3) docker와 github actions를 통한 배포 자동화"
 description: "셀럽잇 팀의 CI/CD 발전기"
 keywords: ["CI/CD", "인프라"]
 tags:
@@ -11,7 +11,7 @@ tags:
   - docker
 ---
 
-셀럽잇 CI/CD 발전기 - (3-1) 백엔드의 docker와 github actions를 통한 배포 자동화
+셀럽잇 CI/CD 발전기 - (3) docker와 github actions를 통한 배포 자동화
 
 <!--truncate-->
 
@@ -90,9 +90,9 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 
 전체적인 Flow는 다음과 같습니다.
  1. main 브랜치에 pr에 merge되는 순간 github actions의 CD workflow가 동작합니다.
- 2. workflow에서는 DockerFile을 통해 react 혹은 spring 애플리케이션 이미지를 생성한 뒤 DockerHub에 Push합니다.
- 3. 이후 EC2의 self hosted runners를 동작시켜 DockerHub에서 DockerFile을 Pull 받습니다.
- 4. Pull 받은 DockerFile을 실행시킵니다.
+ 2. workflow에서는 Dockerfile을 통해 react 혹은 spring 애플리케이션 이미지를 생성한 뒤 DockerHub에 Push합니다.
+ 3. 이후 EC2의 self hosted runners를 동작시켜 DockerHub에서 Dockerfile을 Pull 받습니다.
+ 4. Pull 받은 Dockerfile을 실행시킵니다.
 
 이제부터 위 아키텍처를 차근차근 구성해 나가도록 할텐데요, 그 전에 Docker에 대해서 정말 간단히만 알아보도록 하겠습니다.
 자세한 내용은 [공식문서](https://docs.docker.com/)를 포함한 여러 좋은 자료들이 있으므로 이들을 참고해주시면 좋을 것 같습니다.😎
@@ -100,7 +100,7 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 <br/>
 <br/>
 
-### 🚀 DockerFile이 뭔가요?
+### 🚀 Dockerfile이 뭔가요?
 `Docker Image`를 만들기 위한 설정 파일입니다.
 
 <br/>
@@ -128,28 +128,28 @@ Github Actions의 Self Hosted Runner를 통해 각 서버의 배포 스크립트
 <br/>
 
 ## 🧐 백엔드 CD 플로우를 로컬에서 실행해보기
-
 Docker를 통한 CD workflow를 작성하기 전에, 어떤 식으로 동작하는지를 알아야겠죠?<br/>
-그래서 우선 전체적인 과정을 로컬에서 직접 진행한 뒤, 해당 과정을 바탕으로 workflow를 작성하여 실행하도록 하겠습니다.
+그래서 우선 전체적인 과정을 로컬에서 직접 진행한 뒤, 해당 과정을 바탕으로 workflow를 작성하여 실행하도록 하겠습니다.<br/>
+(이 과정은 로컬에 도커가 깔려 있다고 가정하고 진행합니다. 이에 대해서는 이미 여러 블로그나 공식문서에서 설치법을 알려주기 때문에 넘어가도록 하겠습니다.)
 
 <br/>
 <br/>
 
-### 🚀 DockerFile 작성하기
+### 🚀 Dockerfile 작성하기
 
-작성된 DockerFile은 아래와 같습니다.
+작성된 Dockerfile은 아래와 같습니다.
 
 ```dockerfile
 FROM amazoncorretto:17-alpine-jdk
 
 WORKDIR /app
 
-COPY .backend/build/libs/celuveat-0.0.1-SNAPSHOT.jar /app/celuveat.jar
+COPY ./build/libs/celuveat-0.0.1-SNAPSHOT.jar /app/celuveat.jar
 
 CMD ["java", "-jar", "celuveat.jar"]
 ```
 
-한줄 한줄 살펴보도록 하겠습니다.
+한 줄 한 줄 살펴보도록 하겠습니다.
 
 <br/>
 <br/>
@@ -196,17 +196,17 @@ Jar 파일을 실행시키는 부분입니다.
 <br/>
 <br/>
 
-### 🚀 DockerFile을 통해 Docker Image 빌드하기
+### 🚀 Dockerfile을 통해 Docker Image 빌드하기
 
-이제 위 DockerFile을 빌드하여 Docker Image를 생성해보도록 하겠습니다.
+이제 위 Dockerfile을 빌드하여 Docker Image를 생성해보도록 하겠습니다.
 
 
-DockerFile의 위치는 다음과 같습니다.
-![dockerfile](./dockerfile1.png)
+Dockerfile의 위치는 다음과 같습니다.
+![Dockerfile](./Dockerfile1.png)
 
 <br/>
 
-DockerFile을 통해 Docker Image를 빌드하기 전에 Jar파일을 우선 빌드해야 합니다.
+Dockerfile을 통해 Docker Image를 빌드하기 전에 Jar파일을 우선 빌드해야 합니다.
 
 
 ```bash
@@ -219,10 +219,10 @@ DockerFile을 통해 Docker Image를 빌드하기 전에 Jar파일을 우선 빌
 이후 다음 명령어를 통해 이미지를 빌드합니다.
 
 ```bash
-docker build -t celuveat/celuveat-backend ./
+docker build -t celuveat/celuveat ./
 ```
 
-- `-t <name>:<tag>` : 빌드할 Image의 이름과 tag를 정해줍니다.
+`-t <name>:<tag>` : 빌드할 Image의 이름과 tag를 정해줍니다.<br/>
  이때 tag는 생략 가능하며, 이름의 경우 편의를 위해 이후 생성할 DockerHub의 namespace/repository으로 지정하였습니다. <br/>
  저는 tag를 생략했으며, 이 경우 `latest`가 default tag로 붙습니다.
 
@@ -267,7 +267,7 @@ docker run \
 --name backend \
 -p 8080:8080 \
 -e "SPRING_PROFILE=local" \
-celuveat/celuveat-backend
+celuveat/celuveat
 ```
 
 - -d : 백그라운드로 실행합니다.
@@ -275,7 +275,7 @@ celuveat/celuveat-backend
 - --rm : 컨테이너가 종료되면 자동으로 컨테이너를 제거합니다.
 - -p 8080:8080 : 호스트의 포트(외부 포트)(좌측 8080)를 컨테이너의 포트 8080으로 매핑합니다.
 - -e : 환경변수를 설정합니다.
-- celuveat/celuveat-backend : 실행할 Docker Image의 이름(정확히는 태그)을 명시합니다.
+- celuveat/celuveat : 실행할 Docker Image의 이름(정확히는 태그)을 명시합니다.
 
 <br/>
 
@@ -304,12 +304,6 @@ docker stop backend || true
 여기서 `backend`는 `container`의 이름입니다.
 - || true : 도중에 오류가 발생해도 스크립트를 중단하지 않고 계속 진행하도록 합니다.
 
-![dockerstop](./dockerstop.png)
-
-다음과 같이 컨테이너가 종료되었으며, --rm 옵션으로 인해 자동으로 제거된 것 까지 확인할 수 있습니다.
-
-
-
 <br/>
 <br/>
 <br/>
@@ -332,7 +326,6 @@ docker stop backend || true
 ```bash
 docker login
 ```
-
 ![login](./dockerlogin.png)
 
 
@@ -340,7 +333,7 @@ docker login
 <br/>
 
 ```bash
-docker push celuveat/celuveat-backend
+docker push celuveat/celuveat
 ```
 
 ![push](./dockerhubpush.png)
@@ -432,7 +425,7 @@ newgrp docker
 <br/>
 
 이제 다시 로그인을 시도하면 성공하는 것을 확인할 수 있습니다.
-![login](./dockerlogin.png)
+![login](./dockerlogin2.png)
 
 <br/>
 <br/>
@@ -441,7 +434,7 @@ newgrp docker
 DockerHub에서 Image를 Pull 하도록 하겠습니다.
 
 ```bash
-docker pull celuveat/celuveat-backend
+docker pull celuveat/celuveat
 ```
 (만약 태그를 붙여주었다면 태그도 같이 명시해주어야 합니다. 명시하지 않으면 latest가 default로 붙습니다.)
 
@@ -457,7 +450,7 @@ docker run \
 --name backend \
 -p 8080:8080 \
 -e "SPRING_PROFILE=local" \
-celuveat/celuveat-backend
+celuveat/celuveat
 ```
 
 ![docker run2](./dockerun2.png)
@@ -480,10 +473,12 @@ name: ✨ Celuveat backend PROD CD ✨
 
 env:
   PROFILE: prod
-  IMAGE_TAG: prod-${{ secrets.APP_VERSION_TAG }}
+  IMAGE_TAG: back-prod-${{ secrets.APP_VERSION_TAG }}
   DOCKER_CONTAINER_NAME: backend
+  DOCKER_HUB_REPOSITORY: celuveat/celuveat
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -519,8 +514,8 @@ jobs:
       - name: ✨ DockerHub에 로그인
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: ✨ Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
@@ -529,7 +524,7 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           platforms: linux/arm64
-          tags: celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+          tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
   backend-docker-pull-and-run:
     runs-on: [self-hosted, prod]
@@ -538,8 +533,8 @@ jobs:
     steps:
       - name: ✨ DockerHub에서 Image Pull
         run: |
-          docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
-          docker pull celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+          docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_PASSWORD }}
+          docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
           docker container prune -f
           docker image prune -f
@@ -551,7 +546,7 @@ jobs:
             --name ${{ env.DOCKER_CONTAINER_NAME }} \
             -p 8080:8080 \
             -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
-            celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+            ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 ```
 
 
@@ -563,28 +558,33 @@ jobs:
 ```yml
 env:
   PROFILE: prod
-  IMAGE_TAG: prod-${{ secrets.APP_VERSION_TAG }}
+  IMAGE_TAG: back-prod-${{ secrets.APP_VERSION_TAG }}
   DOCKER_CONTAINER_NAME: backend
+  DOCKER_HUB_REPOSITORY: celuveat/celuveat
 ```
 yml 내에서 사용할 변수들을 정의해주는 부분입니다.
 - PROFILE: 스프링을 실행할 때 `SPRING_PROFILES_ACTIVE`의 값으로 줄 값입니다. 프로덕션용 workflow이므로 `prod`로 설정합니다.
 - IMAGE_TAG: 도커 이미지를 환경&버전별로 관리하기 위한 태그를 만드는 부분으로, `prod-1.0.0` 의 형식으로 생성됩니다.
 - DOCKER_CONTAINER_NAME: Docker Image 로부터 생성될 Container의 이름을 정의해주는 부분입니다.
+- DOCKER_HUB_REPOSITORY: DockerHub Repository의 namespace/repository이름 입니다.
 
 <br/>
 <br/>
 
 ```yml
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - "backend/**"
 ```
-해당 워크플로우가 언제 동작할지를 정의하는 부분입니다.
-
+해당 워크플로우가 언제 동작할지를 정의하는 부분입니다.<br/>
 main 브랜치에 push가 발생하였을 때, backend의 하위 디렉토리에 변경이 생겼을 경우 해당 workflow가 동작합니다.
+
+- workflow_dispatch: 워크플로우를 수동으로 트리거할 수 있도록 합니다.
+
 
 <br/>
 <br/>
@@ -690,8 +690,8 @@ gradlew 실행 권한을 부여한 후 jootJar을 통해 jar 파일을 빌드하
 - name: ✨ DockerHub에 로그인
   uses: docker/login-action@v2
   with:
-    username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
-    password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+    username: ${{ secrets.DOCKER_HUB_USERNAME }}
+    password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 ```
 Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는 부분입니다.
 
@@ -707,11 +707,11 @@ Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는
     file: ./backend/Dockerfile
     push: true
     platforms: linux/arm64
-    tags: celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+    tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 ```
 - [docker/build-push-action@v4](https://github.com/docker/build-push-action)를 통해 DockerHub에 이미지를 push하는 과정을 진행합니다.
 - context: Docker Image를 빌드할 컨텍스트 경로를 지정합니다. ./backend를 통해 백엔드 디렉토리로 지정했습니다.
-- file: 이미지를 빌드할 DockerFile의 위치를 지정합니다.
+- file: 이미지를 빌드할 Dockerfile의 위치를 지정합니다.
 - push: DockerHub에 이미지를 푸쉬할지 여부를 지정합니다. true로 설정하여 푸쉬하도록 해주었습니다.
 - 빌드할 이미지 플랫폼을 지정합니다. 저희의 서버는 ubuntu(Linux/UNIX) 64-bit(ARM) 이므로 linux/arm64로 지정하였습니다.
 - 빌드될 이미지의 태그를 지정합니다.
@@ -720,6 +720,7 @@ Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는
 <br/>
 
 위 과정을 진행하면 DockerHub에 다음과 같이 이미지가 올라가게됩니다.
+
 ![pushed](./dockerhubpushed.png)
 
 이어서 EC2에서 Self hosted Runner를 통해 해당 이미지를 Pull 받아 실행하는 부분을 살펴보겠습니다.
@@ -745,8 +746,8 @@ backend-docker-pull-and-run:
 steps:
   - name: ✨ DockerHub에서 Image Pull
     run: |
-      docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
-      docker pull celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+      docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_PASSWORD }}
+      docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
       docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
       docker container prune -f
       docker image prune -f
@@ -770,11 +771,13 @@ steps:
       --name ${{ env.DOCKER_CONTAINER_NAME }} \
       -p 8080:8080 \
       -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
-      celuveat/celuveat-backend:${{ env.IMAGE_TAG }
+      ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 ```
 
 위 옵션들은 모두 이전에 설명한 옵션들이므로 따로 설명하지 않겠습니다.
 
+이렇게 해서 백엔드의 CD 설정이 끝났습니다. 이어서 프론트엔드로 넘어가도록 하겠습니다.
+
 <br/>
 <br/>
 <br/>
@@ -782,11 +785,188 @@ steps:
 <br/>
 <br/>
 
-## 🧐 성능 향상 고려하기
 
-### 🚀 Gradle Caching
+## 🧐 프론트엔드 Dockerfile 작성하기
+```dockerfile
+FROM node:18-alpine
 
-현재 github actions의 workflow가 (jar 파일의 변경 없이) 전체 작업을 수행하는데 걸리는 시간은 다음과 같습니다.
+WORKDIR /app
+
+COPY package.json yarn.lock .
+
+RUN yarn install
+
+COPY . .
+
+RUN yarn build
+
+CMD ["yarn", "start", "--port", "3000"]
+```
+한 줄 한 줄 살펴보도록 하겠습니다.
+
+<br />
+<br />
+
+```dockerfile
+FROM node:18-alpine
+```
+
+Docker 이미지 생성 시 기반이 되는 이미지 레이어를 정의하는 부분입니다.<br/>
+저희의 프로젝트는 node 18.16.1버전을 사용하므로 node:18-alpine을 사용했습니다.
+
+
+<br />
+<br />
+
+```dockerfile
+WORKDIR /app
+```
+
+도커 컨테이너 내에서의 작업 디렉토리를 `/app`으로 설정합니다.<br/>
+이후 진행되는 작업들은 모두 `/app`  내부에서 진행됩니다.
+
+<br />
+<br />
+
+```dockerfile
+COPY package.json yarn.lock .
+```
+이 부분은 사용자의 컴퓨터(호스트)의 package.json과 yarn.lock 파일을
+컨테이너 내부로 복사합니다.
+이 두 파일만 먼저 수행하는 이유는 성능상의 이유 때문인데, 위 두 파일을 자주 변경되지 않으므로 먼저 복사하여 도커 레이어를 캐싱해두면 이후 빌드가 더 빨라집니다.
+
+<br />
+<br />
+
+```dockerfile
+RUN yarn install
+```
+
+yarn install 명령을 실행하여 package.json에 명시된 종속성들을 설치합니다.
+
+<br />
+<br />
+
+```dockerfile
+COPY . .
+```
+
+이 부분은 사용자의 컴퓨터(호스트)의 모든 파일을 컨테이너 내부로 복사합니다.
+
+<br />
+<br />
+
+```dockerfile
+RUN yarn build
+```
+
+애플리케이션을 빌드합니다.
+
+<br />
+<br />
+
+```dockerfile
+CMD ["yarn", "start", "--port", "3000"]
+```
+3000번 포트로 애플리케이션을 실행합니다.
+
+<br />
+<br />
+<br />
+
+## 🧐 프론트엔드 CD workflow 작성하기
+```yml
+name: 🍔 Celuveat frontend PROD CD 🍔
+
+env:
+  PROFILE: prod
+  IMAGE_TAG: front-prod-${{ secrets.APP_VERSION_TAG }}
+  DOCKER_CONTAINER_NAME: frontend
+  DOCKER_HUB_REPOSITORY: celuveat/celuveat
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+
+jobs:
+  frontend-build-and-push:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: 🍔 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🍔 .env 파일 세팅
+        run: |
+          touch .env
+          echo GOOGLE_MAP_API_KEY=${{ secrets.GOOGLE_MAP_API_KEY }} > .env
+          echo BASE_URL=${{ secrets.PROD_BASE_URL }} >> .env
+
+      - name: 🍔 DockerHub에 로그인
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      # Dockerfile에서 yarn 사용하려면 필요함
+      - name: 🍔 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: 🍔 Docker Image 빌드 후 DockerHub에 Push
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  frontend-docker-pull-and-run:
+    runs-on: [self-hosted, prod]
+    if: ${{ needs.frontend-build-and-push.result == 'success' }}
+    needs: [ frontend-build-and-push ]
+
+    steps:
+      - name: 🍔 DockerHub에서 Image Pull
+        run: |
+          docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_PASSWORD }}
+          docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
+          docker container prune -f
+          docker image prune -f
+
+      - name: 🍔 Docker Image 실행
+        run: |
+          docker run \
+            -d \
+            --name ${{ env.DOCKER_CONTAINER_NAME }} \
+            -p 3000:3000 \
+            ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
+```
+
+- cache-from, cache-to: 다음 글에서 자세히 설명할 예정이지만, 간단하게는 도커 레이어의 캐싱을 위해 사용합니다.
+이를 사용하지 않으면 매번 10분정도 걸리는 빌드 시간이 (yarn install의 캐싱으로 인해) 절반가량 줄어들게 됩니다.
+
+나머지 부분은 백엔드와 거의 동일하므로 별다른 설명 없이 마치도록 하겠습니다.
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+## 🧐Gradle Caching을 통한 속도 향상
+
+현재 github actions의 workflow가 전체 작업을 수행하는데 걸리는 시간은 다음과 같습니다.
 
 ![no-caching-1](./no-caching-1.png)
 ![no-caching-2](./no-caching-2.png)
@@ -801,7 +981,7 @@ steps:
 <br/>
 <br/>
 
-### Gradle Caching이란?
+### 🚀 Gradle Caching이란?
 (참고 - [공식문서](https://docs.gradle.org/current/userguide/core_dependency_management.html#sec:dependency-mgmt-in-gradle))<br/>
 Gradle은 빌드 시에 작업(Task)의존성 패키지들을 모두 가져온 뒤, 이들을 dependency cache라 불리는 로컬 캐시에 보관하여
 이후 호출에서 불필요한 네트워크 호출을 방지하는 전략을 사용합니다.
@@ -833,10 +1013,12 @@ name: ✨ Celuveat backend PROD CD ✨
 
 env:
   PROFILE: prod
-  IMAGE_TAG: prod-${{ secrets.APP_VERSION_TAG }}
+  IMAGE_TAG: back-prod-${{ secrets.APP_VERSION_TAG }}
   DOCKER_CONTAINER_NAME: backend
+  DOCKER_HUB_REPOSITORY: celuveat/celuveat
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -882,8 +1064,8 @@ jobs:
       - name: ✨ DockerHub에 로그인
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: ✨ Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
@@ -892,7 +1074,7 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           platforms: linux/arm64
-          tags: celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+          tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
   backend-docker-pull-and-run:
     runs-on: [self-hosted, prod]
@@ -901,8 +1083,8 @@ jobs:
     steps:
       - name: ✨ DockerHub에서 Image Pull
         run: |
-          docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
-          docker pull celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+          docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_PASSWORD }}
+          docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
           docker container prune -f
           docker image prune -f
@@ -914,7 +1096,7 @@ jobs:
             --name ${{ env.DOCKER_CONTAINER_NAME }} \
             -p 8080:8080 \
             -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
-            celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+            ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 ```
 
 <br/>
@@ -935,18 +1117,17 @@ jobs:
 
 간단한 그래이들 캐싱만으로도 (첫 실행 제외) 성능이 대략 25%정도 향상된 것을 확인할 수 있습니다.
 
-<br/>
-<br/>
+
 <br/>
 <br/>
 <br/>
 
-이 방법 외에도, COPY 대신 BIND MOUNT를 활용하여 성능을 좀 더 높여볼 수 있겠다고 생각하지만,
-지금은 시간이 너무 없어서 다음으로 미뤄야 할 것 같습니다..!!
 
-이렇게 해서 이번 글에서는 저희 백엔드 팀의 Docker를 통한 CD 환경 구축 과정을 살펴보았고, <br/>
-다음 글에서는 프론트엔드 팀의 Docker를 통한 CD 환경 구축 과정을 살펴보겠습니다.
+이렇게 해서 이번 글에서는 저희 셀럽잇 팀의 Docker를 통한 CD 환경 구축 과정을 살펴보았습니다.
 
+읽어주셔서 감사합니다 😊
+
+<br/>
 <br/>
 <br/>
 
