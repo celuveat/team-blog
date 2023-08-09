@@ -897,14 +897,15 @@ on:
       - "frontend/**"
 
 jobs:
-  deploy-frontend:
+  frontend-build-and-push:
     runs-on: [self-hosted, prod]
     defaults:
       run:
         working-directory: ./frontend
 
     steps:
-      - uses: actions/checkout@v2
+      - name: 🍔 Checkout repository
+        uses: actions/checkout@v3
 
       - name: 🍔 .env 파일 세팅
         run: |
@@ -929,8 +930,8 @@ jobs:
 
   frontend-docker-pull-and-run:
     runs-on: [self-hosted, prod]
-    if: ${{ needs.deploy-frontend.result == 'success' }}
-    needs: [ deploy-frontend ]
+    if: ${{ needs.frontend-build-and-push.result == 'success' }}
+    needs: [ frontend-build-and-push ]
 
     steps:
       - name: 🍔 DockerHub에서 Image Pull
@@ -954,6 +955,167 @@ jobs:
 <br/>
 <br/>
 <br/>
+<br/>
+<br/>
+
+## 🧐Gradle Caching을 통한 속도 향상
+
+현재 github actions의 workflow가 전체 작업을 수행하는데 걸리는 시간은 다음과 같습니다.
+
+![no-caching-1](./no-caching-1.png)
+![no-caching-2](./no-caching-2.png)
+![no-caching-3](./no-caching-3.png)
+![no-caching-4](./no-caching-4.png)
+
+평균적으로 1분 10초 정도의 시간이 걸리는 것을 알 수 있습니다.
+
+이를 줄이기 위해 Gradle Caching을 해보도록 하겠습니다.
+
+<br/>
+<br/>
+<br/>
+
+### 🚀 Gradle Caching이란?
+(참고 - [공식문서](https://docs.gradle.org/current/userguide/core_dependency_management.html#sec:dependency-mgmt-in-gradle))<br/>
+Gradle은 빌드 시에 작업(Task)의존성 패키지들을 모두 가져온 뒤, 이들을 dependency cache라 불리는 로컬 캐시에 보관하여
+이후 호출에서 불필요한 네트워크 호출을 방지하는 전략을 사용합니다.
+
+그러나 Github Actions의 workflow에서는 매 실행마다 새롭게 의존성들을 가지고 오게 됩니다.<br/>
+의존성을 가져오기 위해 대체로 네트워크 호출을 사용하기 때문에, 해당 과정이 없어진다면 전체 빌드 시간이 매우 단축될 것이라 예상할 수 있습니다.
+
+한번 Gradle Caching을 적용하여 성능 향상이 얼마나 이루어지는지 확인해보도록 하겠습니다.
+방법은 매우 간단합니다.
+```yml
+- name: ✨ Gradle Caching
+  uses: actions/cache@v3
+  with:
+    path: |
+        ~/.gradle/caches
+        ~/.gradle/wrapper
+    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+    restore-keys: |
+        ${{ runner.os }}-gradle-
+```
+
+위 코드를 추가해주면 되는데요, 이를 적용한 전체 workflow는 다음과 같습니다.
+
+<br/>
+<br/>
+
+```yml
+name: ✨ Celuveat backend PROD CD ✨
+
+env:
+  PROFILE: prod
+  IMAGE_TAG: back-prod-${{ secrets.APP_VERSION_TAG }}
+  DOCKER_CONTAINER_NAME: backend
+  DOCKER_HUB_REPOSITORY: celuveat/celuveat
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+
+jobs:
+  backend-docker-build-and-push:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: ✨ Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          token: ${{ secrets.ACTION_TOKEN }}
+
+      - name: ✨ JDK 17 설정
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: ✨ Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+              ~/.gradle/caches
+              ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+              ${{ runner.os }}-gradle-
+
+      - name: ✨ Gradlew 권한 설정
+        run: chmod +x ./gradlew
+
+      - name: ✨ Jar 파일 빌드
+        run: ./gradlew bootJar
+
+      - name: ✨ DockerHub에 로그인
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+
+      - name: ✨ Docker Image 빌드 후 DockerHub에 Push
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
+
+  backend-docker-pull-and-run:
+    runs-on: [self-hosted, prod]
+    if: ${{ needs.backend-docker-build-and-push.result == 'success' }}
+    needs: [ backend-docker-build-and-push ]
+    steps:
+      - name: ✨ DockerHub에서 Image Pull
+        run: |
+          docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+          docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
+          docker container prune -f
+          docker image prune -f
+
+      - name: ✨ Docker Image 실행
+        run: |
+          docker run \
+            -d \
+            --name ${{ env.DOCKER_CONTAINER_NAME }} \
+            -p 8080:8080 \
+            -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
+            ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
+```
+
+<br/>
+<br/>
+
+캐싱을 적용한 github actions의 workflow가 (jar 파일의 변경 없이) 전체 작업을 수행하는데 걸리는 시간은 다음과 같습니다.
+
+#### 첫 실행
+![yes-caching-1](./yes-caching-1.png)
+
+#### 이후 실행
+![yes-caching-2](./yes-caching-2.png)
+![yes-caching-3](./yes-caching-3.png)
+![yes-caching-4](./yes-caching-4.png)
+![yes-caching-5](./yes-caching-5.png)
+
+<br/>
+
+간단한 그래이들 캐싱만으로도 (첫 실행 제외) 성능이 대략 25%정도 향상된 것을 확인할 수 있습니다.
+
+
+<br/>
+<br/>
+<br/>
+
 
 이렇게 해서 이번 글에서는 저희 셀럽잇 팀의 Docker를 통한 CD 환경 구축 과정을 살펴보았습니다.
 
