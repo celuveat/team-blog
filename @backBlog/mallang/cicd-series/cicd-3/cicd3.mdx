@@ -1068,8 +1068,8 @@ jobs:
       - name: ✨ DockerHub에 로그인
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: ✨ Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
