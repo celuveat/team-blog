@@ -518,8 +518,8 @@ jobs:
       - name: ✨ DockerHub에 로그인
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: ✨ Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
@@ -537,7 +537,7 @@ jobs:
     steps:
       - name: ✨ DockerHub에서 Image Pull
         run: |
-          docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_PASSWORD }}
           docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
           docker container prune -f
@@ -694,8 +694,8 @@ gradlew 실행 권한을 부여한 후 jootJar을 통해 jar 파일을 빌드하
 - name: ✨ DockerHub에 로그인
   uses: docker/login-action@v2
   with:
-    username: ${{ secrets.DOCKERHUB_USERNAME }}
-    password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    username: ${{ secrets.DOCKER_HUB_USERNAME }}
+    password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 ```
 Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는 부분입니다.
 
@@ -750,7 +750,7 @@ backend-docker-pull-and-run:
 steps:
   - name: ✨ DockerHub에서 Image Pull
     run: |
-      docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_PASSWORD }}
+      docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_PASSWORD }}
       docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
       docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
       docker container prune -f
@@ -916,8 +916,8 @@ jobs:
       - name: 🍔 DockerHub에 로그인
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: 🍔 Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
@@ -936,7 +936,7 @@ jobs:
     steps:
       - name: 🍔 DockerHub에서 Image Pull
         run: |
-          docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_PASSWORD }}
           docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
           docker container prune -f
