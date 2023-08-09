@@ -479,6 +479,7 @@ env:
   PROFILE: prod
   IMAGE_TAG: back-prod-${{ secrets.APP_VERSION_TAG }}
   DOCKER_CONTAINER_NAME: backend
+  DOCKER_HUB_REPOSITORY: celuveat/celuveat
 
 on:
   workflow_dispatch:
@@ -517,8 +518,8 @@ jobs:
       - name: ✨ DockerHub에 로그인
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: ✨ Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
@@ -527,7 +528,7 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           platforms: linux/arm64
-          tags: celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+          tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
   backend-docker-pull-and-run:
     runs-on: [self-hosted, prod]
@@ -536,8 +537,8 @@ jobs:
     steps:
       - name: ✨ DockerHub에서 Image Pull
         run: |
-          docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
-          docker pull celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+          docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
           docker container prune -f
           docker image prune -f
@@ -549,7 +550,7 @@ jobs:
             --name ${{ env.DOCKER_CONTAINER_NAME }} \
             -p 8080:8080 \
             -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
-            celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+            ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 ```
 
 
@@ -563,11 +564,13 @@ env:
   PROFILE: prod
   IMAGE_TAG: back-prod-${{ secrets.APP_VERSION_TAG }}
   DOCKER_CONTAINER_NAME: backend
+  DOCKER_HUB_REPOSITORY: celuveat/celuveat
 ```
 yml 내에서 사용할 변수들을 정의해주는 부분입니다.
 - PROFILE: 스프링을 실행할 때 `SPRING_PROFILES_ACTIVE`의 값으로 줄 값입니다. 프로덕션용 workflow이므로 `prod`로 설정합니다.
 - IMAGE_TAG: 도커 이미지를 환경&버전별로 관리하기 위한 태그를 만드는 부분으로, `prod-1.0.0` 의 형식으로 생성됩니다.
 - DOCKER_CONTAINER_NAME: Docker Image 로부터 생성될 Container의 이름을 정의해주는 부분입니다.
+- DOCKER_HUB_REPOSITORY: DockerHub Repository의 namespace/repository이름 입니다.
 
 <br/>
 <br/>
@@ -581,11 +584,11 @@ on:
     paths:
       - "backend/**"
 ```
-해당 워크플로우가 언제 동작할지를 정의하는 부분입니다.
-
+해당 워크플로우가 언제 동작할지를 정의하는 부분입니다.<br/>
 main 브랜치에 push가 발생하였을 때, backend의 하위 디렉토리에 변경이 생겼을 경우 해당 workflow가 동작합니다.
 
 - workflow_dispatch: 워크플로우를 수동으로 트리거할 수 있도록 합니다.
+
 
 <br/>
 <br/>
@@ -691,8 +694,8 @@ gradlew 실행 권한을 부여한 후 jootJar을 통해 jar 파일을 빌드하
 - name: ✨ DockerHub에 로그인
   uses: docker/login-action@v2
   with:
-    username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
-    password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+    username: ${{ secrets.DOCKERHUB_USERNAME }}
+    password: ${{ secrets.DOCKERHUB_PASSWORD }}
 ```
 Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는 부분입니다.
 
@@ -708,7 +711,7 @@ Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는
     file: ./backend/Dockerfile
     push: true
     platforms: linux/arm64
-    tags: celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+    tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 ```
 - [docker/build-push-action@v4](https://github.com/docker/build-push-action)를 통해 DockerHub에 이미지를 push하는 과정을 진행합니다.
 - context: Docker Image를 빌드할 컨텍스트 경로를 지정합니다. ./backend를 통해 백엔드 디렉토리로 지정했습니다.
@@ -721,7 +724,7 @@ Secrets에 정의한 username과 password를 통해 DockerHub에 로그인하는
 <br/>
 
 위 과정을 진행하면 DockerHub에 다음과 같이 이미지가 올라가게됩니다.
-TODO 이거 사진 바꿔야함
+
 ![pushed](./dockerhubpushed.png)
 
 이어서 EC2에서 Self hosted Runner를 통해 해당 이미지를 Pull 받아 실행하는 부분을 살펴보겠습니다.
@@ -747,8 +750,8 @@ backend-docker-pull-and-run:
 steps:
   - name: ✨ DockerHub에서 Image Pull
     run: |
-      docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
-      docker pull celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+      docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_PASSWORD }}
+      docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
       docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
       docker container prune -f
       docker image prune -f
@@ -772,7 +775,7 @@ steps:
       --name ${{ env.DOCKER_CONTAINER_NAME }} \
       -p 8080:8080 \
       -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
-      celuveat/celuveat-backend:${{ env.IMAGE_TAG }
+      ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 ```
 
 위 옵션들은 모두 이전에 설명한 옵션들이므로 따로 설명하지 않겠습니다.
@@ -883,6 +886,7 @@ env:
   PROFILE: prod
   IMAGE_TAG: front-prod-${{ secrets.APP_VERSION_TAG }}
   DOCKER_CONTAINER_NAME: frontend
+  DOCKER_HUB_REPOSITORY: celuveat/celuveat
 
 on:
   workflow_dispatch:
@@ -911,8 +915,8 @@ jobs:
       - name: 🍔 DockerHub에 로그인
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_BACKEND_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: 🍔 Docker Image 빌드 후 DockerHub에 Push
         uses: docker/build-push-action@v4
@@ -921,7 +925,7 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           platforms: linux/arm64
-          tags: celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+          tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
   frontend-docker-pull-and-run:
     runs-on: [self-hosted, prod]
@@ -931,8 +935,8 @@ jobs:
     steps:
       - name: 🍔 DockerHub에서 Image Pull
         run: |
-          docker login --username ${{ secrets.DOCKERHUB_BACKEND_USERNAME }} --password ${{ secrets.DOCKERHUB_BACKEND_PASSWORD }}
-          docker pull celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+          docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker pull ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker stop ${{ env.DOCKER_CONTAINER_NAME }} || true
           docker container prune -f
           docker image prune -f
@@ -943,7 +947,7 @@ jobs:
             -d \
             --name ${{ env.DOCKER_CONTAINER_NAME }} \
             -p 3000:3000 \
-            celuveat/celuveat-backend:${{ env.IMAGE_TAG }}
+            ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 ```
 위 부분은 백엔드와 거의 동일하므로 별다른 설명 없이 마치도록 하겠습니다.
 
