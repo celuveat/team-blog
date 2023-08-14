@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkceluveat_team_blog=self.webpackChunkceluveat_team_blog||[]).push([[3441],{3901:e=>{e.exports=JSON.parse('{"permalink":"/team-blog/back-blog/tags/o-auth","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
