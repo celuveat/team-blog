@@ -87,7 +87,9 @@ $ sudo apt-get install python3-certbot-nginx
 
 `$ certbot certonly --nginx -d {domain}`
 
-이때 `{domain}` 에는 적용하고자하는 도메인을 입력해주세요! 
+이때 `{domain}` 에는 적용하고자하는 도메인을 입력해주세요!
+
+그 다음엔 이메일을 입력하고, 약관 동의인 첫 번째엔 y 이메일 수신 여부인 두 번째에는 n을 누릅니다.
 
 이제 `$ sudo ls /etc/letsencrypt/live/{domain}` 을 통해 1개의 README 파일과 4개의 pem키 파일이 생성된 것을 확인하시면 됩니다.
 
