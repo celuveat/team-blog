@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkceluveat_team_blog=self.webpackChunkceluveat_team_blog||[]).push([[3157],{7850:a=>{a.exports=JSON.parse('{"label":"Infra","permalink":"/team-blog/back-blog/tags/infra","allTagsPath":"/team-blog/back-blog/tags","count":1}')}}]);
