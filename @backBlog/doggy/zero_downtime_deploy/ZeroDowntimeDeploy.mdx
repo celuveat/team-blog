@@ -1,0 +1,238 @@
+---
+date: 2023-10-21
+authors: kdkdhoho
+title: "셀럽잇의 무중단 배포 적용기"
+description: "셀럽잇의 무중단 배포 적용기"
+keywords: ["무중단배포", "Infra"]
+tags:
+  - 무중단배포
+  - Infra
+---
+
+셀럽잇의 무중단 배포 적용기
+
+<!--truncate-->
+
+안녕하세요. 셀럽잇 팀 백엔드 도기입니다. 🐶<br/>
+이번 글에선 셀럽잇이 어떻게 무중단 배포를 적용했는 지에 대해 작성하고자 합니다.<br/>
+그럼 바로 시작하겠습니다.
+
+# 🤔어떻게 적용할까?
+
+## Rolling? 블루/그린?
+
+현재 배포 서버로 EC2 인스턴스 1대를 사용중입니다.<br/>
+무중단 배포를 위해 인스턴스를 추가로 사용하기 위해선 기술 검토 요청을 보내야 하며 그동안의 대기 시간이 존재합니다. 또, 추가 사용이 가능한지도 미지수입니다.
+
+따라서 한 대의 서버에서도 충분히 무중단 배포를 진행할 수 있다고 판단했기에 **블루/그린** 방식을 적용합니다.
+
+# 🤔배포 시나리오
+
+기본적으로 8080포트와 8081포트를 사용합니다.
+
+전체적인 시나리오는 다음과 같습니다.
+
+1. 그린이 **배포될 포트(Idle Port)**를 찾는다.
+2. 그린을 **배포**한다.
+3. 그린 **헬스 체크**를 진행한다.
+4. 문제가 없다면, **Nginx의 포트 포워딩 설정**을 **그린으로 변경**하고 **블루를 종료**한다.<br/>
+문제가 있다면, **그린을 종료한다.**
+
+이제 위 시나리오의 과정에 대해 더 자세히 말씀드리겠습니다.
+
+Idle Port는 8080 포트에 요청을 쏘아보고 응답의 결과로 찾습니다.<br/>
+만약 응답 코드가 200이면 현재 8080 포트에서 블루가 동작중인 셈이니 8081포트가 Idle Port가 됩니다.
+
+이렇게 찾은 포트로 그린을 배포합니다.
+
+그 다음 그린의 헬스 체크를 진행하기 위해 30초의 대기 시간을 가집니다.<br/>
+이유는 곧바로 실행한 헬스 체크 이후에 예상치 못한 상황으로 그린 서버가 죽게될 가능성을 염두해두었기 때문입니다. 그리고 현재 스프링 애플리케이션이 서버에 제대로 띄어지기까지 약 20초의 시간이 소요되기 때문입니다.
+
+헬스 체크 결과, 그린 서버가 정상적으로 배포가 됐다면 Nginx의 포트 포워딩 설정을 변경합니다. 그리고 5초의 대기 시간을 주고 블루 서버를 종료합니다.<br/>
+그린 서버에 문제가 생겨 정상적으로 실행되지 않았다면 종료합니다.
+
+```bash
+RESPONSE_CODE=$(curl -o /dev/null -w "%{http_code}" http://localhost:8080/celebs)
+if [ ${RESPONSE_CODE} = 200 ];
+    then
+        IDLE_PORT=8081
+        IDLE_MONITORING_PORT=18082
+        USED_PORT=8080
+    else
+        IDLE_PORT=8080
+        IDLE_MONITORING_PORT=18081
+        USED_PORT=8081
+fi
+
+echo "IDLE_PORT=${IDLE_PORT}"
+echo "IDLE_MONITORING_PORT=${IDLE_MONITORING_PORT}"
+
+IMAGE_TAG=back-prod-${APP_VERSION_TAG}
+DOCKER_CONTAINER_NAME=backend-${IDLE_PORT}
+DOCKER_HUB_REPOSITORY=celuveat/celuveat
+SERVER_LOG_DIR_PATH=~/log
+DOCKER_LOG_DIR_PATH=/app/logs
+
+docker pull ${DOCKER_HUB_REPOSITORY}:${IMAGE_TAG}
+docker run \
+-d \
+--name ${DOCKER_CONTAINER_NAME} \
+-p $IDLE_PORT:8080 \
+-p $IDLE_MONITORING_PORT:18080 \
+-e "SPRING_PROFILES_ACTIVE=prod" \
+-v ${SERVER_LOG_DIR_PATH}:${DOCKER_LOG_DIR_PATH} \
+${DOCKER_HUB_REPOSITORY}:${IMAGE_TAG}
+
+# 새로 뜬 컨테이너 확인
+sleep 30
+HEALTHY_CODE=$(curl -o /dev/null -w "%{http_code}" http://localhost:${IDLE_PORT}/celebs)
+if [ ${HEALTHY_CODE} != 200 ];
+    then
+            IDLE_CONTAINER_ID=$(docker ps -q --filter "publish=${IDLE_PORT}")
+            docker stop ${IDLE_CONTAINER_ID}
+            docker rm ${IDLE_CONTAINER_ID}
+            echo "TERMINATED"
+            exit 1
+fi
+
+echo "set \$service_url http://127.0.0.1:${IDLE_PORT};set \$service_monitoring_url http://127.0.0.1:${IDLE_MONITORING_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
+sudo service nginx reload
+
+sleep 5
+USED_CONTAINER_ID=$(docker ps -q --filter "publish=${USED_PORT}")
+docker stop ${USED_CONTAINER_ID}
+docker rm ${USED_CONTAINER_ID}
+docker image prune -f
+```
+
+# 🤔모니터링은..?
+
+기존에 모니터링을 위해 Spring Actuator의 포트로 `18080` 포트를 사용하고 있었습니다.<br/>
+무중단 배포를 위해, 모니터링을 위한 포트도 함께 변경해줘야 합니다.<br/>
+따라서 `8080, 18080` / `8081, 18081` 으로 묶어서 관리하기로 결정했습니다.
+
+마찬가지로 Nginx에서 포트 포워딩을 처리해줍니다.
+
+그런데 여기서 중요한 점이 있습니다!!<br/>
+Nginx에서 Actuator의 포트를 포워딩해주기 위해 18080 포트를 listen하여 점유하게 됩니다.<br/>
+즉, Actuator의 포트로 18080 포트를 사용하지 못하게 됩니다.
+
+결과적으로 모니터링을 위한 포트는 `18081` 과 `18082` 를 사용합니다 !
+
+# 🤔Nginx 설정
+
+아래는 Nginx 포트 포워딩 설정 스크립트입니다.
+
+```bash
+server {
+  listen 443 ssl;
+  server_name api.celuveat.com;
+
+  ssl_certificate /etc/letsencrypt/live/api.celuveat.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/api.celuveat.com/privkey.pem;
+
+  include /etc/nginx/conf.d/service-url.inc;
+  location / {
+    proxy_pass $service_url;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
+
+server {
+  listen 18080;
+  include /etc/nginx/conf.d/service-url.inc;
+  location / {
+    proxy_pass $service_monitoring_url;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
+```
+
+# 🤔Github Actions Workflow
+
+```bash
+name: ✨ Celuveat backend PROD CD ✨
+
+env:
+  PROFILE: prod
+  IMAGE_TAG: back-prod-${{ secrets.APP_VERSION_TAG }}
+  DOCKER_CONTAINER_NAME: backend
+  DOCKER_HUB_REPOSITORY: celuveat/celuveat
+  SERVER_LOG_DIR_PATH: ~/log
+  DOCKER_LOG_DIR_PATH: /app/logs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+
+jobs:
+  backend-docker-build-and-push:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: ✨ Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          token: ${{ secrets.ACTION_TOKEN }}
+
+      - name: ✨ JDK 17 설정
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: ✨ Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: ✨ Gradlew 권한 설정
+        run: chmod +x ./gradlew
+
+      - name: ✨ Jar 파일 빌드
+        run: ./gradlew bootJar
+
+      - name: ✨ DockerHub에 로그인
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: ✨ Docker Image 빌드 후 DockerHub에 Push
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
+
+  backend-docker-pull-and-run:
+    runs-on: [self-hosted, prod]
+    if: ${{ needs.backend-docker-build-and-push.result == 'success' }}
+    needs: [ backend-docker-build-and-push ]
+    steps:
+      - name: ✨ 배포 스크립트 실행
+        run: |
+          export APP_VERSION_TAG=${{ secrets.APP_VERSION_TAG }}
+          sh /home/ubuntu/deploy.sh
+```
